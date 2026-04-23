@@ -553,15 +553,7 @@ function renderDetail(s){
       '</div>'+
     '</div></div>';
 
-  // EBITDA boxes
-  if(s.ebitda){
-    var payback=(150000/s.ebitda).toFixed(1);
-    html+='<div class="ebox">'+
-      ebtEl('EBITDA Estimado','color:var(--gn-a)','$'+Number(s.ebitda).toLocaleString()+'/mes')+
-      ebtEl('Payback Estimado','color:var(--navy)',payback+' meses')+
-      ebtEl('Inversión Ref.','color:var(--tx2)','$150K USD')+
-    '</div>';
-  }
+
 
   // Semáforo por categorías
   var cats=[
