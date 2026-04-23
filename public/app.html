@@ -108,7 +108,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .gc2{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px}
 .gc2 h3{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700}
 .di{display:flex;justify-content:space-between;padding:2px 0;font-size:11px}.dk{color:var(--tx2)}.dv{font-family:var(--mono);font-weight:600}
-/* EBITDA */
+
 .ebox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .ei{text-align:center;padding:10px;border-radius:8px;background:var(--bg3)}.ei .el{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}.ei .ev{font-size:18px;font-weight:800;font-family:var(--mono);margin-top:2px}
 /* Semaforo */
@@ -259,27 +259,6 @@ var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 // SAL13 model weights (sum = 1.0)
 var W={Pob:.08,Crec:.05,Vis:.058,TrafV:.11,Comp:.06,Noct:.095,CapD:.07,CapN:.14,Tick:.04,UbQ:.11,Acc:.09,DblV:.048,Tur:.05};
 
-var VARS_SAL=[
-  {k:'TrafV',  label:'Tráf. Vehicular', w:.11},
-  {k:'CapN',   label:'Cap. Nocturna',   w:.14},
-  {k:'UbQ',    label:'Ubicación/Comer.',w:.11},
-  {k:'Noct',   label:'Nocturno',        w:.095},
-  {k:'Acc',    label:'Accesibilidad',   w:.09},
-  {k:'Pob',    label:'Población',       w:.08},
-  {k:'Vis',    label:'Visibilidad',     w:.058},
-  {k:'CapD',   label:'Cap. Diurna',     w:.07},
-  {k:'Comp',   label:'Competencia',     w:.06},
-  {k:'Crec',   label:'Crecimiento',     w:.05},
-  {k:'Tur',    label:'Turismo',         w:.05},
-  {k:'DblV',   label:'Doble Vía',       w:.048},
-  {k:'Tick',   label:'NSE/Ticket',      w:.04}
-];
-
-// Grade scale
-function getGrade(score){
-  if(score>=8.5)return'A+';if(score>=7.0)return'A';if(score>=5.5)return'B';
-  if(score>=4.0)return'C';if(score>=3.0)return'D';return'F';
-}
 function gc(g){g=g||'';return(g==='A+'||g==='A')?'a':g==='B'?'b':g==='C'?'c':'d'}
 function gco(g){g=g||'';return(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--gn-b)':g==='C'?'var(--yl)':'var(--rd)'}
 
@@ -421,13 +400,12 @@ function renderKPIs(){
   var avg=(scores.reduce(function(a,b){return a+b},0)/scores.length).toFixed(2);
   var best=DB.reduce(function(a,b){return(a.score||0)>(b.score||0)?a:b});
   var worst=DB.reduce(function(a,b){return(a.score||99)<(b.score||99)?a:b});
-  var totalEbitda=DB.reduce(function(a,b){return a+(b.ebitda||0)},0);
   var aCount=DB.filter(function(s){return s.grade==='A+'||s.grade==='A'}).length;
 
   document.getElementById('kpiBar').innerHTML=
     kpiEl('Score promedio','var(--navy)',avg)+
     kpiEl('Mejor tienda','var(--gn-a)',best.name+' ('+best.score+')')+
-    kpiEl('EBITDA total est.','var(--gn-a)','$'+Number(totalEbitda).toLocaleString()+'/mes')+
+    
     kpiEl('Tiendas grado A','var(--gn-a)',aCount+' / '+DB.length)+
     kpiEl('Competidores mapeados','var(--tx2)',COMPS.length);
 }
@@ -439,7 +417,7 @@ function renderTags(){
       return'<button class="tag'+(x[0]===filt?' on':'')+'" onclick="setF(\''+x[0]+'\',this)">'+x[1]+'</button>'
     }).join('')+
     '<select id="sortSel" onchange="render()" style="font-size:9px;padding:2px 6px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--tx2);font-family:var(--font);margin-left:auto;font-weight:500">'+
-    '<option value="score">Score ↓</option><option value="ebitda">EBITDA ↓</option><option value="name">Nombre</option></select>';
+    '<option value="score">Score ↓</option><option value="name">Nombre</option></select>';
 }
 function setF(f,b){filt=f;document.querySelectorAll('.tag').forEach(function(t){t.classList.remove('on')});b.classList.add('on');render()}
 
@@ -454,7 +432,6 @@ function render(){
     return true;
   }).sort(function(a,b){
     if(sv==='name')return a.name.localeCompare(b.name);
-    if(sv==='ebitda')return(b.ebitda||0)-(a.ebitda||0);
     return(b.score||0)-(a.score||0);
   });
 
@@ -493,7 +470,7 @@ function renderMarkers(){
     if(!s.lat||!s.lng)return;
     var g=s.grade,col=cols[g]||'#999';
     var m=L.circleMarker([s.lat,s.lng],{radius:9,fillColor:col,color:'#fff',weight:2,fillOpacity:.9}).addTo(map);
-    m.bindTooltip('<b>'+s.name+'</b><br>'+g+' · '+s.score+' | $'+Number(s.ebitda).toLocaleString()+'/mes',{direction:'top',offset:[0,-8]});
+    m.bindTooltip('<b>'+s.name+'</b><br>'+g+' · '+s.score,{direction:'top',offset:[0,-8]});
     m.on('click',function(){select(s.id)});
     markers[s.id]=m;
   });
@@ -547,7 +524,7 @@ function renderDetail(s){
       '<div class="bds">'+
         '<span class="bd bd-n">Score: '+s.score+'</span>'+
         '<span class="bd bd-n">DRS: '+s.drs+'/5</span>'+
-        (s.ebitda?'<span class="bd bd-g">$'+Number(s.ebitda).toLocaleString()+'/mes</span>':'')+
+
         '<span class="bd bd-p">'+s.modelVersion+'</span>'+
         (s.formato?'<span class="bd bd-n">'+s.formato+'</span>':'')+
       '</div>'+
@@ -740,8 +717,7 @@ function computeScanScore(name,lat,lng){
   s.grade=getGrade(s.score);
   s.gradeReal=s.grade;
 
-  // Estimate EBITDA (rough SAL formula)
-  s.ebitda=s.score>=7?Math.round((s.score-4)*5000):s.score>=5.5?Math.round((s.score-4)*3000):0;
+
 
   document.getElementById('dw').innerHTML=renderDetail(s);
 
@@ -779,7 +755,7 @@ function showCompare(){
       '<div class="mf" style="font-size:28px;font-weight:800;color:'+gco(g)+'">'+g+'</div>'+
       '<h3>'+s.name+'</h3>'+
       '<div class="mf" style="font-size:12px;color:var(--tx2);margin-bottom:8px">'+s.id+' · '+s.municipio+'</div>'+
-      [['Score',s.score],['DRS',s.drs+'/5'],['EBITDA','$'+Number(s.ebitda).toLocaleString()+'/mes']].map(function(r){
+      [['Score',s.score],['DRS',s.drs+'/5']].map(function(r){
         return'<div class="compare-row"><span class="cl">'+r[0]+'</span><span class="cv">'+r[1]+'</span></div>';
       }).join('')+
       VARS_SAL.map(function(v){
@@ -805,7 +781,7 @@ function shareStore(id){
     '📍 *'+s.name+'* ('+s.id+')\n'+
     '📊 Score: *'+s.score+'* | Grado: *'+s.grade+'*\n'+
     '⭐ DRS: '+s.drs+'/5\n'+
-    (s.ebitda?'💰 EBITDA Est.: $'+Number(s.ebitda).toLocaleString()+'/mes\n':'')+
+
     '📍 '+s.municipio+', '+s.departamento+'\n\n'+
     '_Modelo SAL13 V1.4 · AMPM Centroamérica_\n'+
     'https://sitelo-sal.vercel.app';
