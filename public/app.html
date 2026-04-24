@@ -736,7 +736,7 @@ async function scanNewLocation(){
   '</div>';
 
   var prog=document.getElementById('aiProgress');
-  var steps=['Estimando tráfico vehicular…','Evaluando zona y NSE…','Contando competencia…','Analizando captación nocturna…','Calculando score final…'];
+  var steps=['🔍 Gemini: identificando zona y municipio…','🔍 Gemini: evaluando tráfico y NSE…','🔍 Gemini: analizando competencia…','🧠 Claude: revisando y corrigiendo scores…','⚡ Calculando score SAL13 final…'];
   var si=0;var iv=setInterval(function(){if(prog&&si<steps.length){prog.textContent=steps[si++]}},1200);
 
   var scores=await aiScoreLocation(name,lat,lng);
@@ -772,64 +772,126 @@ async function scanNewLocation(){
 }
 
 async function aiScoreLocation(name,lat,lng){
-  var defaults={TrafV:5,CapN:5,UbQ:5,Noct:5,Acc:5,Pob:5,Vis:5,CapD:5,Comp:5,Crec:5,Tur:3,DblV:5,Tick:5};
+  var defaults={TrafV:4,CapN:4,UbQ:4,Noct:4,Acc:5,Pob:4,Vis:5,CapD:4,Comp:6,Crec:4,Tur:2,DblV:4,Tick:4};
 
-  var prompt='Eres SiteLo, sistema experto de selección de ubicaciones AMPM El Salvador. '+
-    'Analiza la ubicación en coordenadas '+lat.toFixed(5)+', '+lng.toFixed(5)+' ("'+name+'").\n'+
+  // El Salvador–specific context for accurate scoring
+  var salCtx=
+    'GEOGRAFÍA EL SALVADOR:\n'+
+    '• Carreteras principales (TrafV/DblV alto 7-9): CA-1 Panamericana (Oriente-Occidente), CA-4 Autopista del Norte (San Salvador→Santa Ana/Aguilares), CA-2 Carretera del Litoral (La Libertad→Usulután), Bypass/Anillo Periférico San Salvador, Boulevard del Ejército, CA-3 (San Salvador→Cojutepeque→San Miguel).\n'+
+    '• Carreteras secundarias (TrafV/DblV medio 4-6): calles departamentales pavimentadas, bulevares urbanos dentro de municipios.\n'+
+    '• Calles locales/residenciales (TrafV/DblV bajo 1-3): calle sin salida, acceso a colonia, camino rural.\n'+
+    '• NSE ALTO (Tick 7-9): Colonia Escalón, Santa Elena, Antiguo Cuscatlán, Merliot/Ciudad Merliot, Santa Tecla centro, Col. San Benito, Jardines de Guadalupe, La Cima, Lomas de San Francisco.\n'+
+    '• NSE MEDIO (Tick 4-6): Santa Ana centro, San Miguel centro, Soyapango partes buenas, Apopa, Ilopango partes comerciales, San Marcos, Lourdes Colón, San Pedro Perulapán.\n'+
+    '• NSE BAJO (Tick 1-3): Soyapango industrial, Ciudad Delgado, Tonacatepeque, Chalchuapa popular, zonas rurales sin comercio formal.\n'+
+    '• Competencia directa AMPM (baja Comp): Super Selectos (cadena líder, muy presente), Walmart/Despensa Familiar, La Colonia, Súper Económico, gasolineras con tienda (Shell, Texaco, Puma, UNO).\n'+
+    '• Generadores NOCTURNOS (CapN/Noct alto): gasolineras 24h, hospitales con emergencias, casinos, Zona Rosa (San Salvador), zonas de bares/restaurantes en Santa Ana y San Miguel, carreteras interurbanas con tránsito nocturno.\n'+
+    '• Turismo (Tur alto 7-9): El Tunco/El Zonte/La Libertad (surf), Suchitoto, Ruta de las Flores (Juayúa/Apaneca/Ataco), Lago Coatepeque, Cerro Verde/Santa Ana volcán, Tazumal. En San Salvador solo zona de hoteles boutique.\n'+
+    '• Pob alto (7-9): municipios densos del AMSS (Soyapango, Ilopango, Mejicanos), centros de Santa Ana y San Miguel. Pob bajo (1-3): zonas rurales, municipios pequeños.\n'+
+    '• IMPORTANTE: si las coordenadas están en zona desconocida, rural o campo abierto → todos los scores bajos (2-4).';
+
+  var basePrompt=
+    'Eres SiteLo, experto en apertura de tiendas AMPM en El Salvador. Estudia la ubicación en coordenadas '+
+    lat.toFixed(5)+', '+lng.toFixed(5)+' ("'+name+'").\n\n'+salCtx+'\n\n'+
     'Red AMPM actual: '+getAllStoresContext()+'\n\n'+
-    'REGLAS DE SCORING (sé MUY ESTRICTO y realista):\n'+
-    '- La escala es 1-10. Un 10 es prácticamente imposible. Un 8+ requiere tráfico masivo + alta densidad + excelente NSE.\n'+
-    '- Una ubicación promedio en El Salvador: 4-5.5. Buena: 6-7. Excelente: 7-8. Excepcional: 8+.\n'+
-    '- Penalizá fuerte por: zona rural, acceso difícil, competencia intensa, baja densidad, sin flujo nocturno.\n'+
-    '- Comp: 10=sin competidores AMPM ni tiendas 24h, 1=saturado de competidores directos.\n'+
-    '- Tur: solo score alto si es zona turística reconocida (playa, volcán, etc.).\n'+
-    '- DblV: 10=bulevar principal o carretera CA con alta velocidad, 5=calle secundaria, 1=callejón.\n\n'+
-    'Variables SAL13:\n'+
-    'TrafV=tráfico vehicular, CapN=captación nocturna, UbQ=calidad/prestigio zona, Noct=actividad nocturna,\n'+
-    'Acc=accesibilidad física, Pob=población residente 1km, Vis=visibilidad desde vía, CapD=captación diurna,\n'+
-    'Comp=nivel competencia (inverso), Crec=potencial crecimiento zona, Tur=flujo turístico, DblV=tipo vía, Tick=NSE/ticket\n\n'+
-    'Responde ÚNICAMENTE con JSON válido (sin texto antes ni después):\n'+
+    'REGLAS OBLIGATORIAS (NO se puede ignorar ninguna):\n'+
+    '1. NUNCA uses 5 como valor default. Razona cada variable desde la realidad salvadoreña.\n'+
+    '2. Identifica primero: ¿En qué municipio/departamento están esas coordenadas? ¿Qué tipo de vía? ¿NSE de la zona?\n'+
+    '3. TrafV: si está en CA-1/CA-4/Bypass → 7-9. Boulevard urbano → 5-7. Calle secundaria → 3-5. Zona rural → 1-3.\n'+
+    '4. CapN: solo alto si hay gasolinera 24h, hospital, casino, o ruta interurbana nocturna CONFIRMADA. Default conservador: 3-4.\n'+
+    '5. Comp: penalizá fuerte. Si hay Super Selectos o Walmart en zona → 3-5. Sin competencia formal → 7-8.\n'+
+    '6. Tick: NSE Escalón/Santa Elena → 8-9. NSE popular → 3-4. Zona media → 5-6.\n'+
+    '7. Tur: SOLO alto si es destino turístico conocido. San Salvador urbano sin atractivo → 1-2. Playa/volcán/Suchitoto → 6-8.\n'+
+    '8. Escala de rigor: ubicación promedio SV = 4.5-5.5 score final. Buena = 6-7. Excepcional = 7.5+. Un 10 es imposible.\n'+
+    '9. Si hay duda entre 2 valores, elige el MENOR (conservador).\n\n'+
+    'Responde ÚNICAMENTE con JSON válido, sin texto adicional:\n'+
     '{"TrafV":X,"CapN":X,"UbQ":X,"Noct":X,"Acc":X,"Pob":X,"Vis":X,"CapD":X,"Comp":X,"Crec":X,"Tur":X,"DblV":X,"Tick":X,'+
-    '"municipio":"nombre municipio","zona":"descripción breve zona","road":"nombre calle o carretera",'+
-    '"justificacion":"2-3 oraciones sobre los scores clave y por qué esta ubicación tiene ese potencial"}';
+    '"municipio":"nombre","departamento":"nombre","zona":"descripción zona ej: boulevard comercial / carretera rural / colonia residencial","road":"nombre vía",'+
+    '"justificacion":"3-4 oraciones: zona identificada, fortaleza principal, debilidad principal, recomendación"}';
 
   function parseAI(text){
-    try{var m=text.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{}}catch(e){return{}}
+    if(!text)return null;
+    try{
+      // Find the most complete JSON object
+      var m=text.match(/\{[\s\S]*\}/);
+      if(!m)return null;
+      return JSON.parse(m[0]);
+    }catch(e){
+      // Try to extract just the numeric fields
+      var r={};
+      VARS_SAL.forEach(function(v){
+        var rx=new RegExp('"'+v.k+'"\\s*:\\s*([0-9.]+)');
+        var match=text.match(rx);
+        if(match)r[v.k]=parseFloat(match[1]);
+      });
+      ['municipio','departamento','zona','road','justificacion'].forEach(function(k){
+        var rx=new RegExp('"'+k+'"\\s*:\\s*"([^"]*)"');
+        var match=text.match(rx);
+        if(match)r[k]=match[1];
+      });
+      return Object.keys(r).length>3?r:null;
+    }
   }
 
-  var gP=fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.3}})
-  }).then(function(r){return r.json()}).then(function(d){
-    try{return parseAI(d.candidates[0].content.parts[0].text)}catch(e){return{}}
-  }).catch(function(){return{}});
+  // ── STEP 1: Gemini ──────────────────────────────────────────
+  var prog=document.getElementById('aiProgress');
+  if(prog)prog.textContent='🔍 Gemini investigando zona…';
+  var geminiResult=null;
+  try{
+    var gRes=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{role:'user',parts:[{text:basePrompt}]}],
+        generationConfig:{temperature:0.15,topP:0.85,maxOutputTokens:700}
+      })
+    });
+    var gData=await gRes.json();
+    var gText=gData.candidates&&gData.candidates[0]&&gData.candidates[0].content&&
+              gData.candidates[0].content.parts&&gData.candidates[0].content.parts[0]?
+              gData.candidates[0].content.parts[0].text:'';
+    geminiResult=parseAI(gText);
+  }catch(e){geminiResult=null}
 
-  var cP=fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
-      messages:[{role:'user',content:prompt}]})
-  }).then(function(r){return r.json()}).then(function(d){
-    try{return parseAI(d.content[0].text)}catch(e){return{}}
-  }).catch(function(){return{}});
+  // ── STEP 2: Claude reviews Gemini & produces final score ────
+  if(prog)prog.textContent='🧠 Claude revisando y corrigiendo…';
+  var geminiSummary=geminiResult?
+    'Gemini evaluó: '+VARS_SAL.map(function(v){return v.k+'='+(geminiResult[v.k]||'?')}).join(', ')+
+    '. Zona: '+(geminiResult.zona||'?')+'. Justificación Gemini: '+(geminiResult.justificacion||'—'):
+    'Gemini no pudo completar la evaluación.';
 
-  var res=await Promise.all([gP,cP]);
-  var g=res[0],c=res[1];
+  var claudePrompt=basePrompt+'\n\n'+geminiSummary+
+    '\n\nTu tarea: revisa los scores de Gemini. Si alguno parece inflado, desinflado, o no corresponde a la realidad salvadoreña de esa zona, corrígelo. '+
+    'Devuelve TU propio JSON final con los valores que consideres correctos. No estés de acuerdo automáticamente con Gemini.';
 
-  // Average numeric fields; fallback to default if both fail
+  var claudeResult=null;
+  try{
+    var cRes=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,
+        messages:[{role:'user',content:claudePrompt}]})
+    });
+    var cData=await cRes.json();
+    var cText=cData.content&&cData.content[0]?cData.content[0].text:'';
+    claudeResult=parseAI(cText);
+  }catch(e){claudeResult=null}
+
+  // ── MERGE: Claude es la fuente principal, Gemini es fallback ─
   var merged={};
   VARS_SAL.forEach(function(v){
-    var gv=parseFloat(g[v.k])||0,cv=parseFloat(c[v.k])||0;
-    var val=gv&&cv?(gv+cv)/2:gv||cv||defaults[v.k];
+    var cv=claudeResult?parseFloat(claudeResult[v.k])||0:0;
+    var gv=geminiResult?parseFloat(geminiResult[v.k])||0:0;
+    // Claude wins; if Claude failed, use Gemini; if both failed, use defaults
+    var val=cv>0?cv:(gv>0?gv:defaults[v.k]);
     merged[v.k]=Math.round(Math.max(1,Math.min(10,val))*10)/10;
   });
 
-  // String fields: prefer Claude, fallback Gemini
-  merged.municipio=c.municipio||g.municipio||'El Salvador';
-  merged.zona=c.zona||g.zona||'—';
-  merged.road=c.road||g.road||'—';
-  var j=(c.justificacion||g.justificacion||'Score calculado por IA basado en conocimiento geográfico de El Salvador');
+  var best=claudeResult||geminiResult||{};
+  merged.municipio=best.municipio||'El Salvador';
+  merged.departamento=best.departamento||'—';
+  merged.zona=best.zona||'—';
+  merged.road=best.road||'—';
+  var j=best.justificacion||'Score basado en conocimiento geográfico de El Salvador';
   merged.justificacion=j+' · Verificar con visita presencial antes de decidir.';
 
   return merged;
