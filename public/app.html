@@ -258,7 +258,23 @@ var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 // SAL13 model weights (sum = 1.0)
 var W={Pob:.08,Crec:.05,Vis:.058,TrafV:.11,Comp:.06,Noct:.095,CapD:.07,CapN:.14,Tick:.04,UbQ:.11,Acc:.09,DblV:.048,Tur:.05};
+var VARS_SAL=[
+  {k:'TrafV', label:'Tráfico vehicular',        w:W.TrafV},
+  {k:'CapN',  label:'Captación nocturna',        w:W.CapN},
+  {k:'UbQ',   label:'Ubicación / calidad zona',  w:W.UbQ},
+  {k:'Noct',  label:'Actividad nocturna',        w:W.Noct},
+  {k:'Acc',   label:'Accesibilidad',             w:W.Acc},
+  {k:'Pob',   label:'Población residente',       w:W.Pob},
+  {k:'Vis',   label:'Visibilidad',               w:W.Vis},
+  {k:'CapD',  label:'Captación diurna',          w:W.CapD},
+  {k:'Comp',  label:'Nivel de competencia',      w:W.Comp},
+  {k:'Crec',  label:'Crecimiento de zona',       w:W.Crec},
+  {k:'Tur',   label:'Flujo turístico',           w:W.Tur},
+  {k:'DblV',  label:'Doble vía / corredor',      w:W.DblV},
+  {k:'Tick',  label:'Ticket promedio / NSE',     w:W.Tick}
+];
 
+function getGrade(score){if(score>=8.5)return'A+';if(score>=7.0)return'A';if(score>=5.5)return'B';if(score>=4.0)return'C';if(score>=3.0)return'D';return'F'}
 function gc(g){g=g||'';return(g==='A+'||g==='A')?'a':g==='B'?'b':g==='C'?'c':'d'}
 function gco(g){g=g||'';return(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--gn-b)':g==='C'?'var(--yl)':'var(--rd)'}
 
