@@ -87,9 +87,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .hero{display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;box-shadow:var(--sh2);position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .hero.ha::before{background:linear-gradient(90deg,#86efac,#15803d)}.hero.hb::before{background:linear-gradient(90deg,#d9f99d,#65a30d)}.hero.hc::before{background:linear-gradient(90deg,#fef08a,#eab308)}.hero.hd::before,.hero.hf::before{background:linear-gradient(90deg,#fca5a5,#dc2626)}
-.rng{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:3px solid}
+.rng{width:130px;height:130px;border-radius:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:5px solid}
 .rng.ra{border-color:var(--gn-a);background:rgba(21,128,61,.06)}.rng.rb{border-color:var(--gn-b);background:rgba(77,124,15,.06)}.rng.rc{border-color:var(--yl);background:rgba(202,138,4,.06)}.rng.rd{border-color:var(--rd);background:rgba(220,38,38,.06)}
-.gl{font-size:32px;font-weight:800;font-family:var(--mono)}
+.gl{font-size:80px;font-weight:800;font-family:var(--mono);line-height:1}
 .gl.ga{color:var(--gn-a)}.gl.gb{color:var(--gn-b)}.gl.gc{color:var(--yl)}.gl.gd{color:var(--rd)}
 .hi h1{font-size:16px;font-weight:700;letter-spacing:-.2px}.hi .sub{font-size:16px;color:var(--tx2);font-family:var(--mono);margin-top:3px;opacity:.7}
 .bds{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
@@ -216,6 +216,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <button class="tbtn" onclick="toggleCompareMode()" id="compareBtn" title="Comparar tiendas">⚖️</button>
 <button class="tbtn" onclick="showHistory()" title="Historial de evaluaciones">📋</button>
 <button class="tbtn" onclick="shareCurrentWhatsApp()" title="Compartir por WhatsApp" style="color:#25D366">📲</button>
+<button class="tbtn" onclick="exportPDF()" title="Exportar resumen a PDF (1 página)" style="color:#dc2626">📄</button>
 <button class="tbtn" onclick="showIdeas()" title="Ideas de mejora con IA">💡</button>
 <button class="tbtn" onclick="v20CacheStats()" title="Caché y estadísticas">⚡</button>
 <button class="tbtn" onclick="toggleTheme()">🌙</button>
@@ -1153,6 +1154,101 @@ function shareStore(id){
 function shareCurrentWhatsApp(){
   if(sel)shareStore(sel);
   else{var msg='🇸🇻 *SiteLo El Salvador* — sitelo-sal.vercel.app\n\nAnálisis de ubicaciones AMPM · Modelo SAL13 V1.4';window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank')}
+}
+
+// ============================================================
+// V2.4: EXPORT TO PDF (1 página, letra grande)
+// ============================================================
+function exportPDF(){
+  var s=sel?DB.find(function(d){return d.id===sel}):null;
+  // Si hay una eval temporal en pantalla (POI-CALC), tomar esa
+  var calc=document.querySelector('#dw .hero')?{
+    name:document.querySelector('#dw .hero .hi h1')?.textContent||'Evaluación',
+    grade:document.querySelector('#dw .hero .gl')?.textContent||'?',
+    score:document.querySelector('#dw .hero .hi .sub')?.textContent||''
+  }:null;
+  if(!s&&!calc){alert('Seleccioná una tienda o evaluá una ubicación primero');return}
+  var st=s||{
+    name:calc.name,grade:calc.grade,score:parseFloat(calc.score)||0,
+    municipio:'—',departamento:'El Salvador',zona:'—',road:'—',
+    delivScore:0,delivComp:0,corrections:''
+  };
+  if(s){
+    // Extract dim values from the store
+    VARS_SAL.forEach(function(v){st[v.k]=parseFloat(s[v.k])||0});
+  }
+
+  // Build a print-friendly HTML doc with everything in 1 page
+  var grade=st.grade||getGrade(st.score);
+  var gradeColor=grade==='A+'||grade==='A'?'#15803d':grade==='B'?'#65a30d':grade==='C'?'#ca8a04':'#dc2626';
+  var corrections=s?(s.corrections||''):(document.querySelector('#dw .pnl p')?.textContent||'');
+
+  var w=window.open('','_blank','width=900,height=1200');
+  if(!w){alert('El navegador bloqueó la ventana. Permití pop-ups en sitelo-sal.vercel.app');return}
+
+  var rows='';
+  if(s||(calc&&st.Pob)){
+    rows=VARS_SAL.map(function(v){
+      var val=parseFloat(st[v.k])||0;
+      var color=val>=7?'#15803d':val>=5.5?'#65a30d':val>=4?'#ca8a04':'#dc2626';
+      return'<tr><td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-weight:600;font-size:14px">'+v.k+'</td>'+
+             '<td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-family:monospace;font-size:14px;color:'+color+';font-weight:700;text-align:right">'+val.toFixed(1)+'</td>'+
+             '<td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-size:11px;color:#666;text-align:right">'+(v.w*100).toFixed(1)+'%</td></tr>';
+    }).join('');
+  }
+
+  var poiSection='';
+  if(s&&s.poi_counts){
+    var keys=Object.keys(s.poi_counts).slice(0,12);
+    poiSection='<div style="margin-top:14px;padding:10px;background:#f5f5f0;border-radius:6px"><div style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📍 POIs cercanos (Google Places)</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 12px;font-size:13px">'+
+      keys.map(function(k){return'<div><b>'+k+':</b> '+s.poi_counts[k]+'</div>'}).join('')+
+      '</div></div>';
+  }
+
+  w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>SiteLo SV — '+st.name+'</title>'+
+    '<style>'+
+    '@page{size:A4;margin:14mm}'+
+    '@media print{body{margin:0}.noprint{display:none}}'+
+    '*{margin:0;padding:0;box-sizing:border-box;font-family:"Plus Jakarta Sans",system-ui,sans-serif}'+
+    'body{padding:18px;color:#1B2A4A;line-height:1.4;background:#fff}'+
+    '.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #E63B2E;padding-bottom:10px;margin-bottom:14px}'+
+    '.head h1{font-size:24px;font-weight:800;color:#1B2A4A}'+
+    '.head .meta{font-size:13px;color:#666;margin-top:4px}'+
+    '.brand{font-size:14px;font-weight:700;color:#E63B2E;text-align:right}'+
+    '.brand .small{font-size:10px;color:#999;font-weight:500;letter-spacing:.5px;text-transform:uppercase}'+
+    '.heroPDF{display:flex;align-items:center;gap:24px;padding:18px;background:linear-gradient(135deg,'+gradeColor+'10,'+gradeColor+'04);border:2px solid '+gradeColor+';border-radius:14px;margin-bottom:14px}'+
+    '.gradeBig{font-size:120px;font-weight:900;font-family:monospace;color:'+gradeColor+';line-height:.95;letter-spacing:-4px}'+
+    '.scoreInfo h2{font-size:30px;font-weight:800}'+
+    '.scoreInfo .scoreLine{font-size:24px;font-family:monospace;font-weight:700;color:'+gradeColor+';margin-top:4px}'+
+    '.scoreInfo .where{font-size:15px;color:#666;margin-top:6px}'+
+    '.section{margin-bottom:12px}'+
+    '.section h3{font-size:13px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #e5e5e5;padding-bottom:4px;margin-bottom:8px}'+
+    '.justBox{padding:12px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;font-size:13px;line-height:1.5}'+
+    'table{width:100%;border-collapse:collapse}'+
+    '.foot{margin-top:14px;padding-top:8px;border-top:1px solid #e5e5e5;font-size:10px;color:#999;text-align:center}'+
+    '.printBtn{position:fixed;top:20px;right:20px;padding:12px 24px;background:#E63B2E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15)}'+
+    '</style></head><body>'+
+    '<button class="printBtn noprint" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>'+
+    '<div class="head">'+
+      '<div><h1>'+st.name+'</h1><div class="meta">'+(st.municipio||'')+' · '+(st.departamento||'')+(st.road&&st.road!=='—'?' · '+st.road:'')+'</div></div>'+
+      '<div class="brand">SiteLo El Salvador<div class="small">AMPM · Modelo SAL13 V2.4</div></div>'+
+    '</div>'+
+    '<div class="heroPDF">'+
+      '<div class="gradeBig">'+grade+'</div>'+
+      '<div class="scoreInfo">'+
+        '<h2>'+(grade==='A+'||grade==='A'?'Ubicación recomendada':grade==='B'?'Ubicación viable':grade==='C'?'Ubicación marginal':'NO recomendado')+'</h2>'+
+        '<div class="scoreLine">Score: '+(st.score||0).toFixed(3)+' / 10</div>'+
+        '<div class="where">Zona: '+(st.zona||'—')+(st.delivScore?' · Delivery: '+st.delivScore.toFixed(1)+'/10':'')+'</div>'+
+      '</div>'+
+    '</div>'+
+    (corrections?'<div class="section"><h3>📝 Justificación / Análisis IA</h3><div class="justBox">'+corrections+'</div></div>':'')+
+    (rows?'<div class="section"><h3>📊 Variables del modelo SAL13</h3><table><thead><tr><th style="text-align:left;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Variable</th><th style="text-align:right;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Valor</th><th style="text-align:right;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Peso</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'')+
+    poiSection+
+    '<div class="foot">Generado '+new Date().toLocaleDateString('es-SV',{day:'numeric',month:'long',year:'numeric'})+' · sitelo-sal.vercel.app · AMPM Centroamérica</div>'+
+    '</body></html>');
+  w.document.close();
+  setTimeout(function(){w.focus();w.print()},400);
 }
 
 // ============================================================
