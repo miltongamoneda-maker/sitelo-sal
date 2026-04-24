@@ -24,57 +24,57 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .login-box{background:var(--bg2);border-radius:16px;padding:36px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
 .login-box img{height:48px;margin-bottom:16px}
 .login-box h1{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
-.login-box .sub{font-size:11px;color:var(--tx3);margin:4px 0 20px;font-weight:500}
+.login-box .sub{font-size:14px;color:var(--tx3);margin:4px 0 20px;font-weight:500}
 .login-box .ig{text-align:left;margin-bottom:12px}
-.login-box label{font-size:10px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
-.login-box input{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:13px;outline:none;font-family:var(--font)}
+.login-box label{font-size:16px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.login-box input{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:16px;outline:none;font-family:var(--font)}
 .login-box input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(230,59,46,.1)}
-.login-box button{width:100%;padding:12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;letter-spacing:.3px;transition:all .12s}
+.login-box button{width:100%;padding:12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;letter-spacing:.3px;transition:all .12s}
 .login-box button:hover{filter:brightness(1.1)}
-.login-box .err{font-size:11px;color:var(--red);margin-top:8px;min-height:16px}
-.login-box .foot{font-size:9px;color:var(--tx3);margin-top:16px}
+.login-box .err{font-size:14px;color:var(--red);margin-top:8px;min-height:16px}
+.login-box .foot{font-size:15px;color:var(--tx3);margin-top:16px}
 /* Layout */
 .app{display:grid;grid-template-columns:300px 1fr;grid-template-rows:52px auto 1fr;height:100vh}
 .hdr{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 16px;gap:10px;box-shadow:var(--sh);z-index:100}
 .hdr img{height:24px}
 .hdr .sep{width:1px;height:20px;background:var(--brd);margin:0 4px}
-.hdr .version{font-size:10px;font-weight:700;color:var(--red);background:rgba(230,59,46,.08);padding:2px 8px;border-radius:4px;letter-spacing:.5px}
+.hdr .version{font-size:16px;font-weight:700;color:var(--red);background:rgba(230,59,46,.08);padding:2px 8px;border-radius:4px;letter-spacing:.5px}
 .hdr .stats{display:flex;gap:3px;margin-left:8px}
-.chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.3px}
+.chip{font-size:15px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.3px}
 .chip-a{background:rgba(21,128,61,.1);color:var(--gn-a)}.chip-b{background:rgba(77,124,15,.1);color:var(--gn-b)}.chip-c{background:rgba(202,138,4,.1);color:var(--yl)}.chip-x{background:rgba(220,38,38,.08);color:var(--rd)}
 .hdr .rt{margin-left:auto;display:flex;gap:6px;align-items:center}
-.hdr .rt span{font-size:10px;color:var(--tx3)}
-.tbtn{background:var(--bg3);border:1px solid var(--brd);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;color:var(--tx2);font-family:var(--font)}
+.hdr .rt span{font-size:16px;color:var(--tx3)}
+.tbtn{background:var(--bg3);border:1px solid var(--brd);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:14px;color:var(--tx2);font-family:var(--font)}
 .tbtn:hover{background:var(--brd)}
 /* KPI Bar */
 .kpi-bar{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--brd);display:flex;padding:6px 16px;gap:12px;overflow-x:auto}
 .kpi{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:var(--bg3);min-width:fit-content;border:1px solid var(--brd)}
-.kpi .kl{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);font-weight:600}.kpi .kv{font-size:13px;font-weight:700;font-family:var(--mono);white-space:nowrap}
+.kpi .kl{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);font-weight:600}.kpi .kv{font-size:16px;font-weight:700;font-family:var(--mono);white-space:nowrap}
 /* Sidebar */
 .side{background:var(--bg2);border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
 .sbar{padding:8px;border-bottom:1px solid var(--brd)}
-.sbar input{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:7px 10px;color:var(--tx);font-size:12px;outline:none;font-family:var(--font)}
+.sbar input{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:7px 10px;color:var(--tx);font-size:15px;outline:none;font-family:var(--font)}
 .sbar input:focus{border-color:var(--red)}
 .tags{display:flex;gap:3px;padding:5px 8px;border-bottom:1px solid var(--brd);flex-wrap:wrap;align-items:center}
-.tag{font-size:9px;padding:3px 8px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);cursor:pointer;color:var(--tx2);font-family:var(--font);font-weight:500}
+.tag{font-size:15px;padding:3px 8px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);cursor:pointer;color:var(--tx2);font-family:var(--font);font-weight:500}
 .tag:hover{border-color:var(--tx3)}.tag.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .slist{flex:1;overflow-y:auto}
 .slist::-webkit-scrollbar{width:3px}.slist::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
 .sc{padding:7px 10px;cursor:pointer;display:flex;align-items:center;gap:8px;border-left:3px solid transparent;transition:all .1s}
 .sc:hover{background:var(--bg3)}.sc.on{background:rgba(230,59,46,.04);border-left-color:var(--red)}
-.gd{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;font-family:var(--mono);border:2px solid}
+.gd{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;font-family:var(--mono);border:2px solid}
 .gd-a{background:rgba(21,128,61,.08);color:var(--gn-a);border-color:rgba(21,128,61,.2)}
 .gd-b{background:rgba(77,124,15,.08);color:var(--gn-b);border-color:rgba(77,124,15,.2)}
 .gd-c{background:rgba(202,138,4,.08);color:var(--yl);border-color:rgba(202,138,4,.2)}
 .gd-d{background:rgba(220,38,38,.08);color:var(--rd);border-color:rgba(220,38,38,.2)}
-.sc .si{flex:1;min-width:0}.sc .nm{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.sc .mt{font-size:9px;color:var(--tx3)}.sc .sv{font-size:12px;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.sc .si{flex:1;min-width:0}.sc .nm{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.sc .mt{font-size:15px;color:var(--tx3)}.sc .sv{font-size:15px;font-weight:700;font-family:var(--mono);flex-shrink:0}
 /* Scan */
 .scan{padding:8px;border-top:1px solid var(--brd);background:var(--bg3)}
-.scan .st{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.scan .st{font-size:15px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
 .irow{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.ig{margin-bottom:4px}.ig label{font-size:9px;color:var(--tx2);display:block;margin-bottom:2px;font-weight:500}.ig input,.ig select{width:100%;background:var(--bg2);border:1px solid var(--brd);border-radius:5px;padding:5px 7px;color:var(--tx);font-family:var(--mono);font-size:11px;outline:none}
-.btn{width:100%;padding:9px;border:none;border-radius:6px;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;background:var(--red);color:#fff;transition:all .12s;letter-spacing:.3px}
+.ig{margin-bottom:4px}.ig label{font-size:15px;color:var(--tx2);display:block;margin-bottom:2px;font-weight:500}.ig input,.ig select{width:100%;background:var(--bg2);border:1px solid var(--brd);border-radius:5px;padding:5px 7px;color:var(--tx);font-family:var(--mono);font-size:14px;outline:none}
+.btn{width:100%;padding:9px;border:none;border-radius:6px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;background:var(--red);color:#fff;transition:all .12s;letter-spacing:.3px}
 .btn:hover{filter:brightness(1.1);transform:translateY(-1px)}.btn:disabled{opacity:.4;transform:none}
 .sp{width:10px;height:10px;border:2px solid rgba(230,59,46,.2);border-top-color:var(--red);border-radius:50%;animation:s .7s linear infinite;display:inline-block}
 @keyframes s{to{transform:rotate(360deg)}}
@@ -91,30 +91,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .rng.ra{border-color:var(--gn-a);background:rgba(21,128,61,.06)}.rng.rb{border-color:var(--gn-b);background:rgba(77,124,15,.06)}.rng.rc{border-color:var(--yl);background:rgba(202,138,4,.06)}.rng.rd{border-color:var(--rd);background:rgba(220,38,38,.06)}
 .gl{font-size:32px;font-weight:800;font-family:var(--mono)}
 .gl.ga{color:var(--gn-a)}.gl.gb{color:var(--gn-b)}.gl.gc{color:var(--yl)}.gl.gd{color:var(--rd)}
-.hi h1{font-size:16px;font-weight:700;letter-spacing:-.2px}.hi .sub{font-size:10px;color:var(--tx2);font-family:var(--mono);margin-top:3px;opacity:.7}
+.hi h1{font-size:16px;font-weight:700;letter-spacing:-.2px}.hi .sub{font-size:16px;color:var(--tx2);font-family:var(--mono);margin-top:3px;opacity:.7}
 .bds{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
-.bd{font-size:8px;font-weight:600;padding:2px 7px;border-radius:5px}
+.bd{font-size:14px;font-weight:600;padding:2px 7px;border-radius:5px}
 .bd-g{background:rgba(21,128,61,.08);color:var(--gn-a)}.bd-y{background:rgba(202,138,4,.08);color:var(--yl)}.bd-r{background:rgba(220,38,38,.08);color:var(--rd)}.bd-n{background:var(--bg3);color:var(--tx3)}.bd-p{background:rgba(124,58,237,.08);color:var(--pu)}.bd-t{background:rgba(230,59,46,.06);color:var(--red)}
 /* Panels */
 .pnl{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:12px;box-shadow:var(--sh)}
-.pnl h2{font-size:10px;font-weight:700;margin-bottom:8px;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px}
-.vt{width:100%;border-collapse:collapse;font-size:11px}
-.vt th{text-align:left;font-size:8px;color:var(--tx3);text-transform:uppercase;padding:4px 5px;border-bottom:1px solid var(--brd);font-weight:600;letter-spacing:.3px}
+.pnl h2{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px}
+.vt{width:100%;border-collapse:collapse;font-size:14px}
+.vt th{text-align:left;font-size:14px;color:var(--tx3);text-transform:uppercase;padding:4px 5px;border-bottom:1px solid var(--brd);font-weight:600;letter-spacing:.3px}
 .vt td{padding:5px 6px;border-bottom:1px solid rgba(128,128,128,.06)}.vt tr:hover td{background:rgba(128,128,128,.03)}
 .mf{font-family:var(--mono);font-weight:600}
 .bar{width:80px;height:5px;background:var(--bg3);border-radius:3px;display:inline-block;vertical-align:middle}.bar i{display:block;height:100%;border-radius:3px}
 /* Grid */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .gc2{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px}
-.gc2 h3{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700}
-.di{display:flex;justify-content:space-between;padding:2px 0;font-size:11px}.dk{color:var(--tx2)}.dv{font-family:var(--mono);font-weight:600}
+.gc2 h3{font-size:14px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700}
+.di{display:flex;justify-content:space-between;padding:2px 0;font-size:14px}.dk{color:var(--tx2)}.dv{font-family:var(--mono);font-weight:600}
 
 .ebox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.ei{text-align:center;padding:10px;border-radius:8px;background:var(--bg3)}.ei .el{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}.ei .ev{font-size:18px;font-weight:800;font-family:var(--mono);margin-top:2px}
+.ei{text-align:center;padding:10px;border-radius:8px;background:var(--bg3)}.ei .el{font-size:14px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}.ei .ev{font-size:18px;font-weight:800;font-family:var(--mono);margin-top:2px}
 /* Semaforo */
 .semaforo{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:12px}
-.semaforo-title{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-.semaforo-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:10px;border-bottom:1px solid rgba(128,128,128,.06)}
+.semaforo-title{font-size:16px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.semaforo-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:16px;border-bottom:1px solid rgba(128,128,128,.06)}
 .semaforo-item:last-child{border-bottom:none}
 .semaforo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .semaforo-label{flex:1;color:var(--tx2)}.semaforo-value{font-family:var(--mono);font-weight:700}
@@ -125,20 +125,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .compare-box h2{font-size:14px;font-weight:700;margin-bottom:12px}
 .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .compare-col{background:var(--bg3);border-radius:8px;padding:12px;text-align:center}
-.compare-col h3{font-size:13px;font-weight:700;margin-bottom:8px}
-.compare-row{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;border-bottom:1px solid rgba(128,128,128,.06)}
+.compare-col h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.compare-row{display:flex;justify-content:space-between;padding:3px 0;font-size:14px;border-bottom:1px solid rgba(128,128,128,.06)}
 .compare-row .cl{color:var(--tx2)}.compare-row .cv{font-family:var(--mono);font-weight:600}
-.cbtn-close{position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)}
+.cbtn-close{position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:15px;color:var(--tx2)}
 /* Empty state */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--tx3);text-align:center;gap:8px;padding:20px}
-.empty h3{font-size:15px;color:var(--tx);font-weight:700}.empty p{font-size:11px;max-width:260px;line-height:1.5}
+.empty h3{font-size:15px;color:var(--tx);font-weight:700}.empty p{font-size:14px;max-width:260px;line-height:1.5}
 /* Radar */
 .radar-wrap{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:12px;box-shadow:var(--sh)}
-.radar-wrap h2{font-size:10px;font-weight:700;margin-bottom:8px;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px}
+.radar-wrap h2{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--tx2);text-transform:uppercase;letter-spacing:.4px}
 /* Exec Summary */
 .exec-summary{background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:12px}
-.exec-verdict{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.exec-reason{font-size:10px;color:var(--tx2);line-height:1.5}
+.exec-verdict{font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.exec-reason{font-size:16px;color:var(--tx2);line-height:1.5}
 .exec-summary.ha .exec-verdict{color:var(--gn-a)}.exec-summary.hb .exec-verdict{color:var(--gn-b)}.exec-summary.hc .exec-verdict{color:var(--yl)}.exec-summary.hd .exec-verdict{color:var(--rd)}
 
 /* V2.0: History (sidebar hidden, data tracked in localStorage) */
@@ -150,9 +150,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .history-box h2{font-size:14px;font-weight:700;margin-bottom:14px}
 .history-item{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;border-left:3px solid var(--red);transition:box-shadow .15s}
 .history-item:hover{box-shadow:var(--sh2)}
-.hi-date{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px}
-.hi-name{font-size:12px;font-weight:700;margin:3px 0}
-.hi-meta{font-size:10px;color:var(--tx2)}
+.hi-date{font-size:14px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px}
+.hi-name{font-size:15px;font-weight:700;margin:3px 0}
+.hi-meta{font-size:16px;color:var(--tx2)}
 /* V2.0: Ideas modal */
 .ideas-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .ideas-modal.show{display:flex}
@@ -206,7 +206,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <header class="hdr">
 <img src="data:image/webp;base64,UklGRiAfAABXRUJQVlA4WAoAAAAQAAAA3wEAgQAAQUxQSCsSAAAB8AYA1MKm2f6dNEndhRpSargNLQ7DYcboHJl1YzDc2b1hxe8ZMl9H58AEGZ11DGe4u43iWvfkfGhynXOuNlnyLSImADSPjAM3t2GTp5sLNq4yuLnm43I31zDEeQa3VjtE/MLszopERMwOdmMZKxERjzV0X8HNKlg43H111AbiD1HuqoN28M5wg3vqsD3EvR3cUkdU0JIR54Y6roRYtjLW7XSLgFiW2dS95GUlIVo39fVwI7VE3isL49xGw5kQKzcND3YPfc2GiKUbhoa6f7zuSSBi5faZrQ2uqPhHn0+bOnXMS6n92oXUdM+j6J3tn8wc+WQLF9QyK6re3pkxuqmhxvI6yWY58v7jUeCqHoyMt38cFVkzzUNe667xtcGV/TYHIlb+NjyQKfNeXv69n2D7awAQdy+YEhggM9TCcm9xPLi4X2dCxOIPElki45d9Hh8NN7cCwGRsRvH45O/pHcxcppkVyHhhpB+4vP32siFaVrdlAJjzDoCx0hINsBv7U8D4FWLxlvlDko0knxGHkfH2WE9whXtOL2BDxLVxTJF4fCTUtux9mQTG9WizeN+q9NcfS4mvHRId3/aJN34tQMaKJYHgKo/JtPJh8Wxflub3J/8J47a8N4sGPttt6Hi0HbjS+17mQ7zUg6P3qZiyiG0vzfiMAcLP6GGZawbXelCmAFoWmGnPbYXNM4qCX/iNAxrk6pD3KLjeXy7hQ/wngTThB3i55DsYcJwFHrXKHaoPrvjWVwXwbheVGfMB3nobQm71h9Z5PDBHbHMguOZjDgpg6TMKOnpsEVrnA676oO0CaJ2sEyQWinxnBOnwln1Sn0pLS3s+dUjPJiF6GJv3fzCJKSi+WfP4ECG/Oo1bxIeZq1NIp0Fdwpm8IhNbJ4WbdPFo0q93A6ag+k2bx4caZHxrN2oZH26WgoBtAohTdYJREn96gaB3yrhvThQhsfjM2ul9Q2X85t5CRLz4upng/8iKnffRZt7uDx72ZfFoO+v3K2iz7NiaCcnV44GsSkSs/KsjKWH8mlOVaDPnp5ndjWLe068jIuZM8iL4Dnh/+120WbDn48H+LIZWM3/9F22Wn/xhSmMR8N8lYR2pk+Evvt1+wO4z+LtCZK/4Iy2CL+oQ2t0copLydSkSiz9KJoVOu4zUk6P99HuiDG1bxip5px1F6tX/t5AJ3Yl2d9VSaf15MRJLM5qQgsafR+q5CYECEH5GAC1DNYLGFVzXooE7emEuCpcui2Uy7kDF3412Wm1GTsvKQCXvmYXIeWeMh2bNSlHxcXvGUTeRdV0zAUMWKu7wtNNoE3JaM0KUzBNykTN3iokPEm4JYEVXjeAzprIUYA5ZXooalswysryIykNt+Cy3IPPl9gqdzyP3riS9NqHqTW9bLfcit+XLMLZUVB5tw3NJBTJf767Q+gRyH2jCB70qBfB6tEaJlTyvA/Pwm6hpdhTHXrW9VRofRf6ih2wZplYg/+0UnWItSjjMxgslKJjTgytb7UyVhL3IX/q0ndGlyJ/bkw9mSuA2sz6wliULeL0zUd/zkbQgi5olFKBnHkpW9KliWoWixZ00GoLqqwDAuAJlLW/yeJWqYV2ADndQ0vJ4FY/lKFrWh8/jLwlcotEjHIX1eUL3oM77AkhdkNgGhpSibF5TAO91KHyjjj6zCIcBTN+g+P8NHK2Q+CD0L0TZ4vYA5q9R+F4SG8TlS1S208ezkGEUsPpsQ70/Jz1G6TOoAqWPeRl/RPGtBm3eI1wB00+o4TIDQ29KavcSlL7ob8hA8QNGNhgpgYdM2sBm2gEPnq9Rc0s7yjDKvCKUn7cSNXxWm88IufApajmFYTBlYS7Kr0hHDUfyeRyQwCn6rKD1AdbHUPsdlBEUK2poRR0vG3X5nJD3JupZ0ZU2hGJFDa2o421vNugqUhStzXxSNrB6XeG48l36S6l9ez307Gsr95UzYBOZmrNP9bBYNcFrkVI15xA++FkC39NmOak9z4tILnivEShHzbtPW6xL0aHfV/+yp0wqJ3v176d5vqge6vsXPdW+Wdt+07IqOHCVPiWH/1i9cXeJ1LW/1vx2wsryo0Brq0RJjC6bKTuBdw9pQ20g1ztNuqTF/aXtjVDVd/glgXtzE6Bq1KwChku0+m8fvnUyI0UXy6pmYD92USmDtZ0eBcs6maCq91NnBQoWNYKq4dPvM9w18MFGCXxfkwYWylM8YRbKbAMwNiqnYF0NVoWBYsR+tlVhYL/5VRrWorxShlWty01anGgD6sn/0HCHQYe1UaAYvJ1tbTTYT75Aw0SBB0VKQrUw/4nEq2aefkicAbxvk56RewvU4/J4Kl8G5ZQKWn/CcLS/Qod1/kD1/pqGAzR42wDKUbd5rBNBuXkJ7SkBw2kJHK2DeRVSFwHvcMJnwJxopbwv9j1QZ/GMAOIHtNfUwnIVsJPcGiPQPdbSNshleQBxPM8YIC6kTReACSL7Nai3A8ltmF5RO+XHBbspm6SKYkmRlRzvATXRSpqnNhpVvxLb4Qmc3gdJlfWkypOAGlDCkQHU6ArScokYiwS2kAqcU4zkiwamvkrlbYF9EeWEVCbQdzJc8iHBQVKG2rdKF6TuxQBvizIKpkv9DPQshlvBJNhC+lECtokskWnyfj4yLgVm77sqbwJ/KqXIINSLYTlDGtA/Im1Uy1K6LzUSuN8mnZAazDCXYRrQl5C2i4wTOcJnSnnjMPL254IXFP4xCTShYJDMFQ+GibTKCIYZpGy1z5WOC503skUVU7C2zD0vhhcZEhhGk/aLNBWxRrH4d5j4Sz5yW4LYYHKFraJkEAwjRct8DYzDaVuB8SXSdrVnlN4TGg38n5Cel9kIjI/QjgBjKum4iOGmBD6nZqzbZei8n89bUfIQCLZenY9YsbMHSBrKKPEyYzgG0t7heIi0T83zgkJpvEx5uEB30tcy/+PoTMvg6EY6JwJrRTLsdfvxYE45arhSAsCjVqQnCAY9suwkUpvKtOPoQHuRowvpiBp0KLaXBjJ/gKDHdcpxmd4cjWgTOZqTcmRmiByyB8ET/kUdx8hImrvO2VmBjA+IWH04mtFSONqTjhKg/Vkbd58FoRkS8D2l1CgSxRFH68/RkHRFZpBIsYc9APOwkxr0rw7+3af9UoDMMreBsxGtLkcrKTCnfrTui7RgkOomMoaCCRKlBo5YWnOO+nrVE8F4FQCP1EtiSbrFD3tvexkKthQ5wJJI8+FoKsZNCxfpQeovcQ44a9GiOGL1MlaI9FcD8HujQKbCrFHMI+nZeSgts56lLqkAOJNrhlwQjSOlSfzNEkyymjki9IIckVEUgLpZItdAz+BeM366glq2EPmcJZp0iSWpZrgoY6qkTJBYw+JHygXOcM12i8ygAaTeFjingWfPxUesqG1zkRUskaRTNdchGcilvCmRyeJDulED/CEynwOiN/MdFYucdQe1biayVIsjNdcWoWuURRIfa5FTA6wTWc4CprfZ/hEK+aQMNW8qkq7F/pprvdB5ykqJZVpcqAG+FfmSB2CslWmLzODrKFya9WqBTv/TYlfNtUnoCmWZxBItTtUA34t8wQWjmPZJGBagqPXER4/7A9yjNBZ5Q4vtNdcOoVzKQolFWhyvATaIvM8GC3jOCnh8gPzlu///SDjYzKU0dF5OyBjKKbMc358i6XymrSy3BBYg8+3107r6gmIpJcl5uSoTjdTxjm+/yFQ+aFTBUc43wMJx7OMRDYBoRGqC81JmFulESnV8N0XSBOAbDqzFFXwbyfkL6gOjPynOecHGIiNIKQ7PyyrSU2IQS1euN5GcXQ9Y65LqOjFDRT4hxTi8BigaLRHE8ipTwF3SdAPwdiHFOjGfi5ym3AaH94TIfRC9z/Ee01NIXQzcQ0lRTswNk0ADpP7m+OaK7JL5l+Nvpk8p1/3Y5pFqOTHYT2Aeab7jyxJ5X+Y2R5kvz0XKSmDfTqrtzPzK55VD6uXwzAUiD4t4V3BgbxaTlTKCza+MlOzMYArbKKQWejm8FJQsDxRpi6wLWSKR+hDby0ju5NTsNzEFXSOtB4c3S2Q7iI7jOcDShPQcl+E47WmnBhcyfYHkpxzfMZEZMlt4sClHMmk21xikv+mYzCmDuwVoYR3KMhzJd7wcXmOUtNQRiatkWshRi3SQqXUxw0+OyHv2fUQszYjSACueYXi4gvYuOLwFIr+D6FJkvmJkMBZQsD9Ls9vImOOAAnah7SsNNUDrHBNlYgWSy+o6PM+bIk+JRORxYT8G2EI6F86Qmo+sDR3PGrR/2lsDxD1dlJr+iYwfg8N7CiVve4u8i+ybOeaScHcYJfY7ZH7d4bRD1TFaIO58NcFG+OMbLchYWM/hGQ6ITAPJVuV82JmhEQ0v91Jq+EERcm90OEuUtmqCiLkHt+7914q8U8DhPYSSt/0lvI6g4C8MsIOGuHtsywAAv8TB84+gYKGXo1mndFOiolxN8qDZ4Rn2ikwByXSUtHZg6MVRtawSxXspDCVNZ4kgbWWJJx1W+1nphkTe85rkJgH5MdICFi/SUZZQ0mW2oSh5zU+iW4UI7jfSIIuJ8cQ50mKFR0mjWLxJG1giSFvVFiptFoF0LSyPAr0XaRoLlFK2s5islKNcfldEUkEw7hYKj2KIvaPHp34dKyl/KHQjPc0CxZRMFrOFsk6tlVXlVRnDRxpYXwbG1qRXeK5TNrBAHmUr11KU3ACCAUdQOi+aBgPKNbj9JAAspFxRCLVSmvLspUxmgWOUdDXIVDjqKQOGD8UsI4HTt5zSkedPynye7ZSVTJ0sEgV1Bbx+R/l1Bho8VSn2TQQAgNcRwmUFOEm4b+RZTunM8zHlYYLvX3YuJIAQGOZbZQoeBt5/CCU+PPMoD/Esogzj8T+DkmnAb1yNOo5jgIdyZY73A9uN76t9qTKVsAx42xPOevB0ItzwJIB56k1ELFweBmIAz5RIHGoGzCMJmcDb0Kp2w5OnsVUtP4DnG5TMAH7P7xHztn4+46lerVt3eGT0ZyeYytoxQIM9AlfSTGC/R5lKWVOV0OtKRQlMkK32IjBnq00GurFlvw4+QOaBJnvZSmaZgdv/olJZcyb4SW0SMK9RSwfWUSh50IfP76f1o1sYQbnx4iIOvFCLATxeucl08kVPUH7Oas/6Aij3KVdJA+66t1V+NHDVvqGSbWRgZgLTpNss5R/XBsGOJSpTgDvyqkq2kSvsosoeT5Ze5RJ344E/zg8Yo9dw4L4ABgDvF/bSri/raADqkEJbeU8Cse9dOyVpwN/wnL3PPYE94YS9tb5QvQD8JhwhnZ4WDbJdbtgpnwD89Y/ZW+0D7LH77WUFAmfzPBTMbw+6GyZbGfB3Tw4AiH35s925NiovZn/8YkNgrftZPuKFJVFADk0/hYg5K+JA0nvCXiti7uouIGkevcuCWLSuP+jLBwCJ4zL25tnI25M5MhHkA986gojXPk4GSfOonRbEgh/7gKTxpa2ViCWbHgXWpKsoWNIDquFbHPi9icemMSQuxAdEDVF+wOwV4wPypphAkDfFhIHWIjYNIfVCzKCvZ4wvyBujg0HeGB0BzIk5KFg+CKplFgdu8OVzwuWczSY5KJjfD6pnUxbcEeqi63EfBa89ANV1HwseT3LJvViGgofrQLVdwoP5T7vevD9CyUw/qL4jmBA/9HaxtTiMgncHQ3V+iA1P9Xalmd4oQ8FNtaFa9+NDXF3HZdbjCAqeTYVq/qwEFs6v5RJL+gEFc6d6QXUfL4JYmpnk+kq8h/zXpgRB9U8XQixf96SPi+tdZD/8khfUhOvEEDF/1aOhrqzPmC6mN4Ua8qoOiGg5suzJFr4uqocZCn+b0d4ANWUMan1lV9a3KU7WB4QbzgmMy1OoPP/rstEpJqhJU/VCvD4InOy3CWedFPCo16xNr15dHoiv5Qk17yrN1oaDsz2dsM1ZqdE9bmmV9xw4308TPvwP1hlVc0/tO3JH5EAiOOGNCSP+g620VfZn+mN1oGrs66fZVniBM264oVQe+t/L8w4iFq5+OghUvVfy5KaCk75EaTn8934Ccd8rAUA1fMdxIhmc9djbCufC/oP9/WN74AzNo20IBOe9y1U7++rDf2+vhsC8iGJN9wBnPvjVnw6eP/DNk0ZwITYklDwH7udjShdbghv6fZVtkeCOflxhhRnc0hFWW9ZZ4K4+YaN4MLitv6pypzO4r6ch4rlkcGMPRNweBu7sOFznA25tjw9M4CYFAFZQOCDODAAAsEQAnQEq4AGCAD5tMpRHpCKiIShx20iADYlibpNBT2ICZCTyKQPQ25D4hF/AMxM0C8Afrv/XsUz2EfEv4n+Cv7Zf2/yAPoA6A7+V/hF+2O1/7Pnmp/0n+Z/hBcqR7/u+xk3N4r8r/y76s7kbxXzTiOvWL3s/nfbx82P8f/xfZx5gH6b/777fO5F5gP53/jv1794T/f/7D2Z/4D7ZvkA/p3+k///tX/9f2D/7p/5/YA/kv+x9Nn9n//b8ln7gfun8B/8q/wf/+/3fuAf//1AP+96gHqf8TfxJ+cXuftSdgMoIJBu7vv/f8mpqmWRSbsJZcb8+RVQzjzFalMySatSmZJNWH7WcAaaqjAipqEVg4jMg5fO8Zx5itSmZHWHaLtdol4hepOk3KsIZ7lS9a6bTqRwmhTP1qB3z+VQCVXX1S2bPDVS79w0bdy4Wimf5N1bi2L/wxk074co6pBAMSqu2l/MEjlrjCDJalSA5nzO3qDXnklvVN4v/UFJHRALwrMLkYNhoAtwTx1hrEwKWVmn2wMCa78MNqzR+77ZWf3oTWss4/Gj1RAFDzQGunA9FmZAJ9EUKrcFOd8NyzmIs2umx3jW+ZREC99O3TEa5zvRi1XO+xCw4hYwA1lrjxAFdUdx8YxdbWtlTzrbTvwwz4uhLPjG0TVV9eQu5h6R7F1Hp/BbJNq71crqnMVp3yI+iJEXt3jXNiZoLk3PR1SV0W6xXPVnzvGceYrUpmSTVqTAAAP3jtSvrd5x7HhJN4rToAXvVIG6bPLeQQHB0ZWsMRi2IDDo+zagmIuThh0vT864b1yz6QEWpujBDzr/GMj7Tyz9rOiD1n+H/M+pV4CP8GKOYxGc1OfycnlSgvVrelqsHQ/IAAAAAABbJI8O4vH0ba6kDcaHINWxehT3vmSRjkXCprn6PxM8FCwbLNI4Y3mKB64dR20ATnvesYi9fTL8JDwwj836oo+rYvR9wjptcdP1Y5FnyuQRLfKGwOg7druKb9FLv+ROVcubbyEQ/9Y9dI8OPe66+ekEngvjzN4D72gfmBbO2rXQRB3gFr0vlHVvSnDmXnyZK/+TZsQswCjwAAAAABa2pbHpEFIAzJx+pm9HzsxxjchkYkG/kmM1+qBlKPVJ0dhNgQBbt+6j/8UiGLo6dEciSS7MgZZNc0VkjsWmdzBDRvRyykiVFmvv5FVPS/CBj2gXI+Iau+hSe9i9cuQZXhx+6FNXX7+yUX90r3kvdipeWsah0nUrISMxJubn2TnrQWMvnTEk1lyoENAcdSigrLiRllvOT5fDRE51Yo831P8LTlQj1dPwId/bzxbY8Fp4BSGMiYTOIrrF5bh1K53LdA+ZxGmhLv/h1BOrnEoylSOnzBM45bYKGusriqVtCAhYB3bAQVodoGRnGkGw2KNudRw9hjU3uR6rvhhqGSHd/yX4dqpYHcOdp5VzcII2mFEUboJTqEuhAPhSDWzrOOZLS0V+RSP/TFeicz/SuLlNzvbJBagVEXmfeIV3zNX2BsAH+fCelrlIDdDQFQM7OtCG8OftF4M7vclXCJs5aJCTouTq/zlkd9o1q/Sgi7Lzh8H6Sn/s84bMXtKRFyF1h3i6LHr3KwLOO6+N00zM2xEQJoh+bMYTFOgs5c4QFbFuKd8xzrLYG1EDcWrBmDY6ZnpyEeyQikkPbexjv2GuQZxQ+Ret1B6g1Cr4JTwKDSGU/lqvNDZLIuj6jIznghoIWz7/CaGJlnzc5GpFkGnXrJmZdjvTeJufqz3A0p+6YolBerOtopvnfmiI5/VMkZ44a/xFCCfVUtXX4HNugODcwA5xzCerkGVb/C83Qz0hWberAZzmnjIHosHzIMrO608MGIGfRNaNsLr9mYVNRLQ1EVeM815j5jV9B3hUpt+ZE7VKotoZDmVLBRWzUEw9m3GzBs+UcHhvJp16IabQd89UylaEr0P1WfFzUx0q9DyiUhgY5xLIbGfNO/KlBVFyyHXmb5q/mAlUStxVDAECDzkwf8PfsKrVFVJnsijm3xGcii77dovXHhZfcCdxFSDhT00rwEbzqTkQkRmzzCmf3UYYCWsQ/PmlR3NBfz9YGqTYDlcJ5Cu2si7YVKs1fBvjRvd8ltTKUAwynabG7R0N6uGnI3NXAAGpJg8UC8MG+cF3tfrDrJrTuI6zgKleeXGa/E3ORNq9PVeO0Qp6+ATjcW+tsO7iu/+JFNTI7AOr3ErdBY2TgOxw+Qw5cIJdQ/nhG8+WxMBcTUXt962ilsLMSmt1JXrw551pukDDWKL2bkwJsDqGHu7bVqjx8SrnBb4+EYpdJcDu4RFcOUqZIk6y10Gje4x/IiEL8bk1VfyiN8ahLNOo7HG7LTJqN864XRXGGmOk7FwbJtyWLyKY09t1spuYpNZu9HB+uUvZl/sfhV2JtS59sWY9x/2Eq7mLbFQWqNcmG82ge+CMU1bnprlAjuOfk68GtrFYh4KrKajCnHhBfy5nNVYi61XjDNbypei8vZPnrMHMRcD71Ulwvsqow0rkQTr8Ef/yOfrGgTNNTcTlzSho6A6JQZc1oRrOU7bo7VekfDCsygOjs+qiNcLVypUZ37aXBjQ5eOeVVjdJeWPul+qEE1hQtKOC3d2A80nvw2D7A1SijfRtDjH7zUm6tmplqBBX/ltBf9ipTppkuv61iynSny98Axpgi7WySZFL7ZQ2ZbMYyfok8jmDddm8WGlmlBjSgGGti8ChE6Tzs68IlO5AG1mPk7mURKPMKNx6OdkJ8UEagIEnCGYDkhSx2iE1rfaK12/HegwuHhSBau2634v0fpB9ToWVhNun+/unn3XoYFnCPakb3RID2ZuJPFyThf9KScA0R87EXg7m5g5GFp2OHzfap0brtgVnsMB6AAUi5mgOo+3TbjO3WD4KIkXTYHg9ELwfL70hW6ZldrmqrWicYggqUn3Nv4MR+C1CIkLAIdaJPA3s/1MrHTAR4WqUGoheap1sQUgUAJzv5gXrje3XNh3605RumY+z5j6pSC9TDr4zQBMOk2nQ3QioZc+eVMcRA/S4RIb9BDEDqdQ/Ppx76R1YB8YPCfXMY8DioOnnAjZADGLFjOIf5UzlQ+P+GZiKjN8/+8fZ/ydzbWY8RaUjbIzasOZexjtFqyRPIT94ymJd4YHZXvFUratZYmWKksVpXqqXJDEn/sBQmp7QO6LLC5W1q/BCTg0JgPVT/wLVXvWPBj5ylV3cGFusEoAW5ek35qWyuPGUxUk7KYzrQIoLillG7WIwn6lm6Sdyi3e8yuRCGlq2dPGr/+3GvIp/BV+HSFsfGRze9NnbAo1OUTJH3PuiUR6E9ijJ99pqjnZ7IixV0zOx2NLIre5CJ9ntMbxGfmymEdunYSon+oSc971i4HodM7MoQnNjYxeVwXbXBF8jSQPOZLIdyvfXTD83kbFaAMHogE+DIPhFdOMB6GsvUHCeZqQc8kdg6S4P2y/FMsHCcYXMowZqPlXFEx///OL6fdKivyFmW9Z39Be0hRF5mByH/i73io9szt6IR1jRerOR5ykcaj7pO6aKSkfBWmc0VRUc6Esh6tM3mjmPFaDAuu8RA6B/rrhfD/jQcNWypjwOMvr5XZJauKaL8SKos+kL9UVt/gooWkuBM6WMsXkNSB+UTVrSVszqzx+hklISt1X3CCf7kd8pVDQ9wqdbZu3YMZ+Z7DyXlx/IiZLRVlYRZfq8DTy+1XyzScTb0MrXyOoXmUzGNAc5En9/vge9+3kEdp9WA+FozYbjDDqa0BribzYygnto9hJEoH7UIhdHYuXVNqOuTn+6eoTSWZsMerdKAmFipaYz8Ftvd781fKGYj/Gyjwxw17zNgtAbMkDggtP3t4qZbgDvAwj8+rTucH5QP8uypUJ1ikr5q6k44n5kALdu6XcSsI9kck+Pf7wxUmZJGxyzzUZ27McHZjk3Fs0C5omNXAEACRtq6pwW+fJ3us5THxd0zYFJUvPbgC7NFoGmTKXdhCu0ZiDSDFaKPM9V6fepvMUi0FGSWuDp+Lu8blw9+qbfKvKJBgyiv0DLUlez76fpW3ysfAyJDeA84D5bQlIMASPzg76eCEbwRqdW3dNLT5hMJ0xr8nwHLmNDazmnWEAxduZt0a9Dt0lQJvk5nr/b9XlaA6Cq2sxY8LN0UkqeOIZ0XaZ3hPLg60cm6zCPva7YFWuYPp53pTriXB6eDrMbFyY6YdKVG6tfvxIJ0uddRt9WUTUZ6/jnja+WBbYXQFEl/6O5qDf7O+urN5eNW44bIqynxB5AGxjvkgCgJFzsp5QnJd6BQ1oAAAAbFhq7Vgt2kB0Sn1mCnBGqbRwxDNv5m18wAAAAAAADIhtaAjxqdclkY7Tj1LB5L5k7DYatYtMX0Hx8AAAAAAAAAAAA=" alt="AMPM" style="height:24px">
 <div class="sep"></div>
-<span style="font-size:12px;font-weight:700;color:var(--tx2)">SiteLo El Salvador</span>
+<span style="font-size:15px;font-weight:700;color:var(--tx2)">SiteLo El Salvador</span>
 <span class="version">V2.0</span>
 <div class="stats" id="stats"></div>
 <button class="mobile-menu" onclick="document.querySelector('.side').classList.toggle('mobile-open')">☰</button>
@@ -237,19 +237,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <div id="scanHistory" style="display:none"><div id="histList"></div></div>
 <div class="scan">
 <div class="st">🔍 Evaluar nueva ubicación</div>
-<div class="ig"><label>📍 Link Google Maps o coordenadas</label><input id="gmLink" placeholder="https://maps.google.com/... o 13.6921, -89.2277" oninput="handleLinkPaste()" style="font-size:10px"><div id="gmFeedback" style="font-size:9px;margin-top:2px;min-height:14px;color:var(--gn-a)"></div></div>
-<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><div style="flex:1;height:1px;background:var(--brd)"></div><span style="font-size:8px;color:var(--tx3);font-weight:600">O MANUAL</span><div style="flex:1;height:1px;background:var(--brd)"></div></div>
+<div class="ig"><label>📍 Link Google Maps o coordenadas</label><input id="gmLink" placeholder="https://maps.google.com/... o 13.6921, -89.2277" oninput="handleLinkPaste()" style="font-size:16px"><div id="gmFeedback" style="font-size:15px;margin-top:2px;min-height:14px;color:var(--gn-a)"></div></div>
+<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><div style="flex:1;height:1px;background:var(--brd)"></div><span style="font-size:14px;color:var(--tx3);font-weight:600">O MANUAL</span><div style="flex:1;height:1px;background:var(--brd)"></div></div>
 <div class="ig"><label>Nombre del punto</label><input id="nN" placeholder="Ej: Km 14 Carretera a Comasagua"></div>
 <div class="irow"><div class="ig"><label>Lat</label><input id="nLat" placeholder="13.6921" type="number" step="0.0001"></div><div class="ig"><label>Lng</label><input id="nLng" placeholder="-89.2277" type="number" step="0.0001"></div></div>
 <button class="btn btn-scan" id="bScan" onclick="scanNewLocation()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Escanear con AI (13 vars)</button>
-<div id="scanSt" style="margin-top:6px;font-size:10px"></div>
+<div id="scanSt" style="margin-top:6px;font-size:16px"></div>
 </div>
 </aside>
 
 <div class="mn">
 <div style="position:relative">
 <div id="map"></div>
-<div style="position:absolute;bottom:28px;left:8px;z-index:999;background:var(--bg2);opacity:.95;backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:5px 10px;font-size:8px;display:flex;gap:8px;align-items:center;font-family:var(--font);font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+<div style="position:absolute;bottom:28px;left:8px;z-index:999;background:var(--bg2);opacity:.95;backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:5px 10px;font-size:14px;display:flex;gap:8px;align-items:center;font-family:var(--font);font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.06)">
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#15803d;display:inline-block"></span>A</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#65a30d;display:inline-block"></span>B</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#eab308;display:inline-block"></span>C</span>
@@ -272,16 +272,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <!-- History Modal -->
 <div class="history-modal" id="historyModal" onclick="if(event.target===this)closeHistory()">
 <div class="history-box">
-<button onclick="closeHistory()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)">✕ Cerrar</button>
+<button onclick="closeHistory()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:15px;color:var(--tx2)">✕ Cerrar</button>
 <h2>📋 Historial de Evaluaciones</h2>
-<div id="historyContent"><div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún. Evaluá una ubicación para comenzar.</div></div>
-<button onclick="clearHistory()" style="margin-top:12px;padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx3);font-size:11px;cursor:pointer;font-family:var(--font)">🗑️ Borrar historial</button>
+<div id="historyContent"><div style="color:var(--tx3);font-size:15px;text-align:center;padding:20px">Sin evaluaciones aún. Evaluá una ubicación para comenzar.</div></div>
+<button onclick="clearHistory()" style="margin-top:12px;padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx3);font-size:14px;cursor:pointer;font-family:var(--font)">🗑️ Borrar historial</button>
 </div>
 </div>
 <!-- Ideas Modal -->
 <div class="ideas-modal" id="ideasModal" onclick="if(event.target===this)closeIdeas()">
 <div class="ideas-box">
-<button onclick="closeIdeas()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)">✕ Cerrar</button>
+<button onclick="closeIdeas()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:15px;color:var(--tx2)">✕ Cerrar</button>
 <h2>💡 Ideas de Mejora — IA</h2>
 <div id="ideasContent"></div>
 </div>
@@ -489,7 +489,7 @@ function renderTags(){
     [['all','Todas'],['A','A'],['B','B'],['C','C']].map(function(x){
       return'<button class="tag'+(x[0]===filt?' on':'')+'" onclick="setF(\''+x[0]+'\',this)">'+x[1]+'</button>'
     }).join('')+
-    '<select id="sortSel" onchange="render()" style="font-size:9px;padding:2px 6px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--tx2);font-family:var(--font);margin-left:auto;font-weight:500">'+
+    '<select id="sortSel" onchange="render()" style="font-size:15px;padding:2px 6px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--tx2);font-family:var(--font);margin-left:auto;font-weight:500">'+
     '<option value="score">Score ↓</option><option value="name">Nombre</option></select>';
 }
 function setF(f,b){filt=f;document.querySelectorAll('.tag').forEach(function(t){t.classList.remove('on')});b.classList.add('on');render()}
@@ -671,12 +671,12 @@ function renderDetail(s){
         ['Recomendación',dScore>=7&&dComp<=5?'✅ Abrir delivery activo':dScore>=4?'⚠️ Delivery moderado':'❌ Delivery limitado']
       ])+
       '</div>'+
-      (s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">📍 Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
+      (s.delivPop?'<div style="font-size:16px;color:var(--tx3);margin-top:6px">📍 Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
     '</div></div>';
   }
 
   // Share button
-  html+='<button onclick="shareStore(\''+s.id+'\')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
+  html+='<button onclick="shareStore(\''+s.id+'\')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:14px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
 
   return html;
 }
@@ -793,9 +793,9 @@ async function scanNewLocation(){
   var dw=document.getElementById('dw');
   dw.innerHTML='<div class="pnl" style="text-align:center;padding:32px 20px">'+
     '<div class="sp" style="width:24px;height:24px;border-width:3px;margin:0 auto 14px"></div>'+
-    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Edge Function evaluando…</div>'+
-    '<div style="font-size:10px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600">25 categorías Google Places + Gemini · cache 30 días</div>'+
+    '<div style="font-size:16px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Edge Function evaluando…</div>'+
+    '<div style="font-size:16px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
+    '<div id="aiProgress" style="font-size:15px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600">25 categorías Google Places + Gemini · cache 30 días</div>'+
   '</div>';
 
   var scores;
@@ -815,14 +815,14 @@ async function scanNewLocation(){
   }catch(e){
     btn.disabled=false;
     st.innerHTML='<span style="color:var(--rd)">⚠️ Error: '+(e&&e.message||e)+'</span>';
-    dw.innerHTML='<div class="pnl"><h2>⚠️ Error</h2><p style="font-size:11px;color:var(--tx2)">No se pudo completar la evaluación. Detalles en consola (F12).</p></div>';
+    dw.innerHTML='<div class="pnl"><h2>⚠️ Error</h2><p style="font-size:14px;color:var(--tx2)">No se pudo completar la evaluación. Detalles en consola (F12).</p></div>';
     console.error('Edge Function failed:',e);
     return;
   }
 
   btn.disabled=false;
   var cacheNote=scores._cache?' · ⚡ desde cache':' · '+Math.round((scores._elapsed_ms||0)/1000)+'s';
-  st.innerHTML='<span style="color:var(--gn-a);font-size:10px">✓ '+scores.grade+' '+scores.score+cacheNote+'</span>';
+  st.innerHTML='<span style="color:var(--gn-a);font-size:16px">✓ '+scores.grade+' '+scores.score+cacheNote+'</span>';
 
   // Build store object from Edge Function response
   var s={
@@ -1117,7 +1117,7 @@ function showCompare(){
     html+='<div class="compare-col">'+
       '<div class="mf" style="font-size:28px;font-weight:800;color:'+gco(g)+'">'+g+'</div>'+
       '<h3>'+s.name+'</h3>'+
-      '<div class="mf" style="font-size:12px;color:var(--tx2);margin-bottom:8px">'+s.id+' · '+s.municipio+'</div>'+
+      '<div class="mf" style="font-size:15px;color:var(--tx2);margin-bottom:8px">'+s.id+' · '+s.municipio+'</div>'+
       [['Score',s.score],['DRS',s.drs+'/5']].map(function(r){
         return'<div class="compare-row"><span class="cl">'+r[0]+'</span><span class="cv">'+r[1]+'</span></div>';
       }).join('')+
@@ -1171,7 +1171,7 @@ function toggleChat(){
 function appendChatMsg(role,text){
   var box=document.getElementById('chatMsgs');
   var div=document.createElement('div');
-  div.style.cssText='padding:8px 10px;border-radius:8px;font-size:11px;line-height:1.5;max-width:85%;word-wrap:break-word;margin-bottom:6px;'+(role==='user'?'background:var(--red);color:#fff;align-self:flex-end;margin-left:auto':'background:var(--bg3);color:var(--tx);align-self:flex-start');
+  div.style.cssText='padding:8px 10px;border-radius:8px;font-size:14px;line-height:1.5;max-width:85%;word-wrap:break-word;margin-bottom:6px;'+(role==='user'?'background:var(--red);color:#fff;align-self:flex-end;margin-left:auto':'background:var(--bg3);color:var(--tx);align-self:flex-start');
   div.innerHTML=text;
   box.appendChild(div);
   box.scrollTop=box.scrollHeight;
@@ -1202,7 +1202,7 @@ async function sendChat(){
 
   var thinking=document.createElement('div');
   thinking.id='chatThinking';
-  thinking.style.cssText='padding:8px 10px;border-radius:8px;font-size:10px;color:var(--tx3);background:var(--bg3);align-self:flex-start;margin-bottom:6px';
+  thinking.style.cssText='padding:8px 10px;border-radius:8px;font-size:16px;color:var(--tx3);background:var(--bg3);align-self:flex-start;margin-bottom:6px';
   thinking.innerHTML='<div class="sp" style="display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:middle"></div>Analizando...';
   document.getElementById('chatMsgs').appendChild(thinking);
   document.getElementById('chatMsgs').scrollTop=document.getElementById('chatMsgs').scrollHeight;
@@ -1231,7 +1231,7 @@ async function sendChat(){
 
   var finalReply='';
   if(claudeReply&&geminiReply){
-    finalReply='<div style="margin-bottom:4px"><span style="background:var(--pu);color:#fff;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700">Claude</span></div>'+claudeReply.replace(/\n/g,'<br>')+'<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--brd)"><span style="background:#ea580c;color:#fff;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700">Gemini</span></div>'+geminiReply.replace(/\n/g,'<br>');
+    finalReply='<div style="margin-bottom:4px"><span style="background:var(--pu);color:#fff;padding:1px 5px;border-radius:3px;font-size:14px;font-weight:700">Claude</span></div>'+claudeReply.replace(/\n/g,'<br>')+'<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--brd)"><span style="background:#ea580c;color:#fff;padding:1px 5px;border-radius:3px;font-size:14px;font-weight:700">Gemini</span></div>'+geminiReply.replace(/\n/g,'<br>');
   }else if(claudeReply){finalReply=claudeReply.replace(/\n/g,'<br>');}
   else if(geminiReply){finalReply=geminiReply.replace(/\n/g,'<br>');}
   else{finalReply='Error: no se pudo conectar con la AI. Verificá tu conexión.';}
@@ -1254,7 +1254,7 @@ function injectChatUI(){
   var panel=document.createElement('div');
   panel.id='chatPanel';
   panel.style.cssText='display:none;position:fixed;bottom:80px;right:20px;width:370px;max-height:480px;background:var(--bg);border:1px solid var(--brd);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.25);z-index:9999;flex-direction:column;overflow:hidden';
-  panel.innerHTML='<div style="padding:10px 14px;background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:13px">🤖 SiteLo AI <span style="font-size:9px;opacity:.8">Claude + Gemini · El Salvador</span></div><button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button></div><div id="chatMsgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:4px;min-height:250px;max-height:360px"></div><div style="padding:8px;border-top:1px solid var(--brd);display:flex;gap:6px"><input id="chatInput" type="text" placeholder="Pregunta sobre tiendas, scores, ubicaciones..." style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx);font-family:var(--font);font-size:11px;outline:none" onkeydown="if(event.key===\'Enter\')sendChat()"><button onclick="sendChat()" style="padding:8px 12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-weight:700;font-size:11px;cursor:pointer">Enviar</button></div>';
+  panel.innerHTML='<div style="padding:10px 14px;background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:16px">🤖 SiteLo AI <span style="font-size:15px;opacity:.8">Claude + Gemini · El Salvador</span></div><button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button></div><div id="chatMsgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:4px;min-height:250px;max-height:360px"></div><div style="padding:8px;border-top:1px solid var(--brd);display:flex;gap:6px"><input id="chatInput" type="text" placeholder="Pregunta sobre tiendas, scores, ubicaciones..." style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx);font-family:var(--font);font-size:14px;outline:none" onkeydown="if(event.key===\'Enter\')sendChat()"><button onclick="sendChat()" style="padding:8px 12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-weight:700;font-size:14px;cursor:pointer">Enviar</button></div>';
   document.body.appendChild(panel);
 }
 
@@ -1298,13 +1298,13 @@ function selectFromHistory(id){
 function showHistory(){
   var hist=getHistory();
   var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
-  var html=hist.length===0?'<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún.</div>':
+  var html=hist.length===0?'<div style="color:var(--tx3);font-size:15px;text-align:center;padding:20px">Sin evaluaciones aún.</div>':
     hist.map(function(h){
       return'<div class="history-item" onclick="selectFromHistory(\''+h.id+'\');closeHistory()">'+
         '<div class="hi-date">'+h.date+'</div>'+
         '<div class="hi-name" style="color:'+(cols[h.grade]||'var(--tx)')+'">'+h.grade+' · '+h.name+'</div>'+
         '<div class="hi-meta">Score: '+h.score+' · '+h.municipio+', '+h.departamento+'</div>'+
-        (h.justificacion?'<div style="font-size:9px;color:var(--tx3);margin-top:4px;line-height:1.4">'+h.justificacion.slice(0,120)+'…</div>':'')+
+        (h.justificacion?'<div style="font-size:15px;color:var(--tx3);margin-top:4px;line-height:1.4">'+h.justificacion.slice(0,120)+'…</div>':'')+
       '</div>';
     }).join('');
   document.getElementById('historyContent').innerHTML=html;
@@ -1315,7 +1315,7 @@ function clearHistory(){
   if(confirm('¿Borrar todo el historial?')){
     localStorage.removeItem(HIST_KEY);
     renderHistSidebar();
-    document.getElementById('historyContent').innerHTML='<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Historial borrado.</div>';
+    document.getElementById('historyContent').innerHTML='<div style="color:var(--tx3);font-size:15px;text-align:center;padding:20px">Historial borrado.</div>';
   }
 }
 
@@ -1388,19 +1388,19 @@ function findDeserts(){
     return'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px">'+
       '<div style="font-size:22px;width:36px;text-align:center">'+d.ico+'</div>'+
       '<div style="flex:1;min-width:0">'+
-        '<div style="font-size:12px;font-weight:700;color:var(--tx)">'+d.n+'</div>'+
-        '<div style="font-size:9px;color:var(--tx3);margin-top:1px">'+d.p+'</div>'+
-        '<div style="font-size:9px;color:var(--tx2);margin-top:1px">Más cercana: <b>'+d.near+'</b></div>'+
+        '<div style="font-size:15px;font-weight:700;color:var(--tx)">'+d.n+'</div>'+
+        '<div style="font-size:15px;color:var(--tx3);margin-top:1px">'+d.p+'</div>'+
+        '<div style="font-size:15px;color:var(--tx2);margin-top:1px">Más cercana: <b>'+d.near+'</b></div>'+
       '</div>'+
       '<div style="text-align:right;flex-shrink:0;margin-right:8px">'+
-        '<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;background:'+tagBg+';color:'+tagCol+'">'+d.tag+'</span>'+
-        '<div style="font-family:var(--mono);font-weight:800;font-size:14px;color:'+tagCol+';margin-top:2px">'+d.dist+'<span style="font-size:9px;font-weight:500">km</span></div>'+
+        '<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:15px;font-weight:700;background:'+tagBg+';color:'+tagCol+'">'+d.tag+'</span>'+
+        '<div style="font-family:var(--mono);font-weight:800;font-size:14px;color:'+tagCol+';margin-top:2px">'+d.dist+'<span style="font-size:15px;font-weight:500">km</span></div>'+
       '</div>'+
       '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">'+
         '<button onclick="document.getElementById(\'nLat\').value='+d.lat.toFixed(5)+';document.getElementById(\'nLng\').value='+d.lng.toFixed(5)+';document.getElementById(\'nN\').value='+JSON.stringify(d.n).replace(/"/g,'&quot;')+';closeCompare()" '+
-          'style="font-size:9px;padding:5px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer;font-family:var(--font);font-weight:700">🔍 Evaluar</button>'+
+          'style="font-size:15px;padding:5px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer;font-family:var(--font);font-weight:700">🔍 Evaluar</button>'+
         '<button onclick="map.flyTo(['+d.lat+','+d.lng+'],13);closeCompare()" '+
-          'style="font-size:9px;padding:4px 10px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;font-family:var(--font);font-weight:600">📍 Mapa</button>'+
+          'style="font-size:15px;padding:4px 10px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;font-family:var(--font);font-weight:600">📍 Mapa</button>'+
       '</div>'+
     '</div>';
   }
@@ -1410,8 +1410,8 @@ function findDeserts(){
     return'<div style="margin-bottom:16px">'+
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'+
         '<span style="font-size:16px">'+emoji+'</span>'+
-        '<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'+
-        '<span style="font-size:10px;color:var(--tx3);font-weight:500">('+items.length+')</span>'+
+        '<span style="font-size:16px;font-weight:700;color:'+color+'">'+title+'</span>'+
+        '<span style="font-size:16px;color:var(--tx3);font-weight:500">('+items.length+')</span>'+
       '</div>'+
       items.map(cardRow).join('')+
     '</div>';
@@ -1422,20 +1422,20 @@ function findDeserts(){
     '<div style="text-align:center;margin-bottom:12px">'+
       '<div style="font-size:28px;margin-bottom:4px">🏜️</div>'+
       '<h2 style="margin:0;font-size:17px;color:var(--tx)">Oportunidades y Desiertos AMPM El Salvador</h2>'+
-      '<div style="font-size:10px;color:var(--tx3);margin-top:3px">'+spots.length+' zonas estratégicas · '+tiendas.length+' tiendas activas · '+dateStr+'</div>'+
+      '<div style="font-size:16px;color:var(--tx3);margin-top:3px">'+spots.length+' zonas estratégicas · '+tiendas.length+' tiendas activas · '+dateStr+'</div>'+
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;text-align:center">'+
-      '<div style="background:rgba(220,38,38,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#dc2626">'+desiertos.length+'</div><div style="font-size:8px;font-weight:600;color:#dc2626">DESIERTOS</div><div style="font-size:7px;color:var(--tx3)">&gt;10km</div></div>'+
-      '<div style="background:rgba(202,138,4,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#ca8a04">'+gaps.length+'</div><div style="font-size:8px;font-weight:600;color:#ca8a04">GAPS</div><div style="font-size:7px;color:var(--tx3)">5-10km</div></div>'+
-      '<div style="background:rgba(21,128,61,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#15803d">'+posibles.length+'</div><div style="font-size:8px;font-weight:600;color:#15803d">POSIBLES</div><div style="font-size:7px;color:var(--tx3)">2-5km</div></div>'+
-      '<div style="background:rgba(148,163,184,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#94a3b8">'+saturados.length+'</div><div style="font-size:8px;font-weight:600;color:#94a3b8">SATURADOS</div><div style="font-size:7px;color:var(--tx3)">&lt;2km</div></div>'+
+      '<div style="background:rgba(220,38,38,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#dc2626">'+desiertos.length+'</div><div style="font-size:14px;font-weight:600;color:#dc2626">DESIERTOS</div><div style="font-size:10px;color:var(--tx3)">&gt;10km</div></div>'+
+      '<div style="background:rgba(202,138,4,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#ca8a04">'+gaps.length+'</div><div style="font-size:14px;font-weight:600;color:#ca8a04">GAPS</div><div style="font-size:10px;color:var(--tx3)">5-10km</div></div>'+
+      '<div style="background:rgba(21,128,61,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#15803d">'+posibles.length+'</div><div style="font-size:14px;font-weight:600;color:#15803d">POSIBLES</div><div style="font-size:10px;color:var(--tx3)">2-5km</div></div>'+
+      '<div style="background:rgba(148,163,184,.06);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:800;color:#94a3b8">'+saturados.length+'</div><div style="font-size:14px;font-weight:600;color:#94a3b8">SATURADOS</div><div style="font-size:10px;color:var(--tx3)">&lt;2km</div></div>'+
     '</div>'+
     section('Desiertos — Alta oportunidad','🔴',desiertos,'#dc2626')+
     section('Gaps — Oportunidad media','🟡',gaps,'#ca8a04')+
     section('Posibles — Evaluar con detalle','🟢',posibles,'#15803d')+
     section('Saturados — Ya cubiertos','⚪',saturados,'#94a3b8')+
     '<div style="margin-top:12px;padding:10px;background:var(--bg3);border-radius:8px;text-align:center">'+
-      '<button onclick="shareDesertsWhatsApp('+JSON.stringify({d:desiertos.length,g:gaps.length,p:posibles.length})+')" style="padding:8px 20px;border:none;border-radius:8px;background:#25D366;color:#fff;font-family:var(--font);font-weight:700;font-size:11px;cursor:pointer">📱 Compartir resumen</button>'+
+      '<button onclick="shareDesertsWhatsApp('+JSON.stringify({d:desiertos.length,g:gaps.length,p:posibles.length})+')" style="padding:8px 20px;border:none;border-radius:8px;background:#25D366;color:#fff;font-family:var(--font);font-weight:700;font-size:14px;cursor:pointer">📱 Compartir resumen</button>'+
     '</div>';
   document.getElementById('compareOverlay').classList.add('show');
 }
@@ -1456,7 +1456,7 @@ async function showIdeas(){
   document.getElementById('ideasModal').classList.add('show');
   var box=document.getElementById('ideasContent');
   var ctx=sel?getStoreContext():getAllStoresContext();
-  box.innerHTML='<div style="text-align:center;padding:24px"><div class="sp" style="width:20px;height:20px;border-width:3px;margin:0 auto 10px"></div><div style="font-size:11px;color:var(--tx3)">Consultando IA…</div></div>';
+  box.innerHTML='<div style="text-align:center;padding:24px"><div class="sp" style="width:20px;height:20px;border-width:3px;margin:0 auto 10px"></div><div style="font-size:14px;color:var(--tx3)">Consultando IA…</div></div>';
 
   var prompt='Eres experto en retail de conveniencia AMPM en El Salvador.\n\nCONTEXTO:\n'+ctx+'\n\nDa 5 ideas concretas y accionables para mejorar la red AMPM en El Salvador. Cada idea debe ser: específica, basada en los datos, y con un impacto estimado en ventas o expansión.\n\nFormato: JSON array [{titulo:string,descripcion:string,impacto:string,urgencia:alta|media|baja}]';
 
@@ -1478,15 +1478,15 @@ async function showIdeas(){
     var urgColors={alta:'var(--rd)',media:'var(--yl)',baja:'var(--gn-a)'};
     box.innerHTML=ideas.map(function(idea,i){
       return'<div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:10px;border-left:3px solid '+(urgColors[idea.urgencia]||'var(--brd)')+'">'+
-        '<div style="font-size:10px;font-weight:700;color:var(--tx);margin-bottom:4px">'+(i+1)+'. '+idea.titulo+'</div>'+
-        '<div style="font-size:10px;color:var(--tx2);line-height:1.5;margin-bottom:6px">'+idea.descripcion+'</div>'+
+        '<div style="font-size:16px;font-weight:700;color:var(--tx);margin-bottom:4px">'+(i+1)+'. '+idea.titulo+'</div>'+
+        '<div style="font-size:16px;color:var(--tx2);line-height:1.5;margin-bottom:6px">'+idea.descripcion+'</div>'+
         '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
-          '<span style="font-size:8px;background:rgba(21,128,61,.08);color:var(--gn-a);padding:2px 7px;border-radius:4px;font-weight:600">💰 '+idea.impacto+'</span>'+
-          '<span style="font-size:8px;background:rgba(0,0,0,.04);color:'+(urgColors[idea.urgencia]||'var(--tx3)')+';padding:2px 7px;border-radius:4px;font-weight:600">⚡ Urgencia: '+idea.urgencia+'</span>'+
+          '<span style="font-size:14px;background:rgba(21,128,61,.08);color:var(--gn-a);padding:2px 7px;border-radius:4px;font-weight:600">💰 '+idea.impacto+'</span>'+
+          '<span style="font-size:14px;background:rgba(0,0,0,.04);color:'+(urgColors[idea.urgencia]||'var(--tx3)')+';padding:2px 7px;border-radius:4px;font-weight:600">⚡ Urgencia: '+idea.urgencia+'</span>'+
         '</div></div>';
     }).join('');
   }else{
-    box.innerHTML='<div style="color:var(--rd);font-size:11px;padding:12px">No se pudo generar ideas. Verificá la conexión con la API.</div>';
+    box.innerHTML='<div style="color:var(--rd);font-size:14px;padding:12px">No se pudo generar ideas. Verificá la conexión con la API.</div>';
   }
 }
 function closeIdeas(){document.getElementById('ideasModal').classList.remove('show')}
