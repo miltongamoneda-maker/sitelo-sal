@@ -1221,7 +1221,7 @@ async function sendChat(){
       body:JSON.stringify({
         contents:chatHistory.map(function(m){return{role:m.role==='user'?'user':'model',parts:[{text:m.content}]}}),
         systemInstruction:{parts:[{text:systemCtx}]},
-        generationConfig:{temperature:0.4,maxOutputTokens:800,thinkingConfig:{thinkingBudget:0}}
+        generationConfig:{temperature:0.4,maxOutputTokens:1500}
       })
     });
     clearTimeout(to);
