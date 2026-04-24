@@ -141,15 +141,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .exec-reason{font-size:10px;color:var(--tx2);line-height:1.5}
 .exec-summary.ha .exec-verdict{color:var(--gn-a)}.exec-summary.hb .exec-verdict{color:var(--gn-b)}.exec-summary.hc .exec-verdict{color:var(--yl)}.exec-summary.hd .exec-verdict{color:var(--rd)}
 
-/* V2.0: History panel */
-.scan-history{padding:6px 8px;border-bottom:1px solid var(--brd);background:var(--bg2)}
-.scan-history .sh-title{font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
-.sh-item{display:flex;align-items:center;gap:5px;padding:3px 0;cursor:pointer;font-size:9px;border-bottom:1px solid rgba(128,128,128,.04)}
-.sh-item:last-child{border-bottom:none}
-.sh-item:hover .sh-nm{color:var(--red)}
-.sh-grade{font-weight:800;font-family:var(--mono);min-width:18px}
-.sh-nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx2)}
-.sh-sc{color:var(--tx3);font-family:var(--mono);font-size:8px}
+/* V2.0: History (sidebar hidden, data tracked in localStorage) */
+#scanHistory{display:none}
 /* V2.0: History modal */
 .history-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .history-modal.show{display:flex}
@@ -241,10 +234,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <div class="tags" id="tags"></div>
 <div class="slist" id="slist"></div>
 
-<div class="scan-history" id="scanHistory" style="display:none">
-<div class="sh-title"><span>📍 Evaluados recientemente</span><button onclick="showHistory()" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:9px;padding:0">Ver todo</button></div>
-<div id="histList"></div>
-</div>
+<div id="scanHistory" style="display:none"><div id="histList"></div></div>
 <div class="scan">
 <div class="st">🔍 Evaluar nueva ubicación</div>
 <div class="ig"><label>📍 Link Google Maps o coordenadas</label><input id="gmLink" placeholder="https://maps.google.com/... o 13.6921, -89.2277" oninput="handleLinkPaste()" style="font-size:10px"><div id="gmFeedback" style="font-size:9px;margin-top:2px;min-height:14px;color:var(--gn-a)"></div></div>
@@ -1273,7 +1263,7 @@ function renderHistSidebar(){
   el.style.display='block';
   var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
   list.innerHTML=hist.slice(0,5).map(function(h){
-    return'<div class="sh-item" onclick="selectFromHistory(''+h.id+'')">'+
+    return'<div class="sh-item" onclick="selectFromHistory(\''+h.id+'\')">'+
       '<span class="sh-grade" style="color:'+(cols[h.grade]||'var(--tx3)')+'">'+h.grade+'</span>'+
       '<span class="sh-nm">'+h.name+'</span>'+
       '<span class="sh-sc">'+h.score+'</span></div>';
@@ -1288,7 +1278,7 @@ function showHistory(){
   var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
   var html=hist.length===0?'<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún.</div>':
     hist.map(function(h){
-      return'<div class="history-item" onclick="selectFromHistory(''+h.id+'');closeHistory()">'+
+      return'<div class="history-item" onclick="selectFromHistory(\''+h.id+'\');closeHistory()">'+
         '<div class="hi-date">'+h.date+'</div>'+
         '<div class="hi-name" style="color:'+(cols[h.grade]||'var(--tx)')+'">'+h.grade+' · '+h.name+'</div>'+
         '<div class="hi-meta">Score: '+h.score+' · '+h.municipio+', '+h.departamento+'</div>'+
