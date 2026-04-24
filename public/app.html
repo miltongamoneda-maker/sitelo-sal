@@ -327,9 +327,9 @@ function gco(g){g=g||'';return(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--g
 
 // Users
 var USERS=[
-  {email:'milton.gamoneda@ampmcentroamerica.com',name:'Milton Gamoneda',hash:'085b25c5b91313d954600fe8675df62c1e44899bd4267e260740fdf739fe5ee3'},
-  {email:'mgmoneda@gmail.com',name:'Milton Gamoneda',hash:'085b25c5b91313d954600fe8675df62c1e44899bd4267e260740fdf739fe5ee3'},
-  {email:'gerald.rocha@ampmcentroamerica.com',name:'Gerald Rocha',hash:'085b25c5b91313d954600fe8675df62c1e44899bd4267e260740fdf739fe5ee3'}
+  {email:'milton.gamoneda@ampmcentroamerica.com',name:'Milton Gamoneda',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'},
+  {email:'mgmoneda@gmail.com',name:'Milton Gamoneda',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'},
+  {email:'gerald.rocha@ampmcentroamerica.com',name:'Gerald Rocha',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'}
 ];
 
 // ============================================================
@@ -1376,7 +1376,7 @@ function findDeserts(){
         '<div style="font-family:var(--mono);font-weight:800;font-size:14px;color:'+tagCol+';margin-top:2px">'+d.dist+'<span style="font-size:9px;font-weight:500">km</span></div>'+
       '</div>'+
       '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">'+
-        '<button onclick="document.getElementById('nLat').value='+d.lat.toFixed(5)+';document.getElementById('nLng').value='+d.lng.toFixed(5)+';document.getElementById('nN').value=''+d.n.replace(/'/g,'\\'+'\'')+'';closeCompare()" '+
+        '<button onclick="document.getElementById(\'nLat\').value='+d.lat.toFixed(5)+';document.getElementById(\'nLng\').value='+d.lng.toFixed(5)+';document.getElementById(\'nN\').value='+JSON.stringify(d.n).replace(/"/g,'&quot;')+';closeCompare()" '+
           'style="font-size:9px;padding:5px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer;font-family:var(--font);font-weight:700">🔍 Evaluar</button>'+
         '<button onclick="map.flyTo(['+d.lat+','+d.lng+'],13);closeCompare()" '+
           'style="font-size:9px;padding:4px 10px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;font-family:var(--font);font-weight:600">📍 Mapa</button>'+
