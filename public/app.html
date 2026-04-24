@@ -805,8 +805,16 @@ async function scanNewLocation(){
   var poi=await researchLocation(lat,lng);
 
   // Step 2 & 3: Sequential AI scoring with real data
-  var scores=await aiScoreLocation(name,lat,lng,poi);
-  clearInterval(iv);
+  var scores;
+  try{
+    scores=await aiScoreLocation(name,lat,lng,poi);
+  }catch(e){
+    btn.disabled=false;
+    st.innerHTML='<span style="color:var(--rd)">⚠️ Error en IA: '+(e&&e.message||e)+'</span>';
+    dw.innerHTML='<div class="pnl"><h2>⚠️ Error</h2><p style="font-size:11px;color:var(--tx2)">No se pudo completar la evaluación con IA. Detalles en consola (F12).</p></div>';
+    console.error('aiScoreLocation failed:',e);
+    return;
+  }
 
   btn.disabled=false;
   st.innerHTML='';
@@ -998,25 +1006,33 @@ async function aiScoreLocation(name,lat,lng,poi){
     }
   }
 
+  // Helper: fetch with timeout — never hang indefinitely
+  function fetchT(url,opts,ms){
+    var ctrl=new AbortController();
+    var to=setTimeout(function(){ctrl.abort()},ms||45000);
+    return fetch(url,Object.assign({},opts,{signal:ctrl.signal}))
+      .finally(function(){clearTimeout(to)});
+  }
+
   // ── STEP 1: Gemini ──────────────────────────────────────────
   var prog=document.getElementById('aiProgress');
   if(prog)prog.textContent='🔍 Gemini investigando zona…';
   var geminiResult=null;
   try{
-    var gRes=await fetch(
+    var gRes=await fetchT(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         contents:[{role:'user',parts:[{text:basePrompt}]}],
         generationConfig:{temperature:0.15,topP:0.85,maxOutputTokens:700}
       })
-    });
+    },45000);
     var gData=await gRes.json();
     var gText=gData.candidates&&gData.candidates[0]&&gData.candidates[0].content&&
               gData.candidates[0].content.parts&&gData.candidates[0].content.parts[0]?
               gData.candidates[0].content.parts[0].text:'';
     geminiResult=parseAI(gText);
-  }catch(e){geminiResult=null}
+  }catch(e){console.warn('Gemini failed:',e);geminiResult=null}
 
   // ── STEP 2: Claude reviews Gemini & produces final score ────
   if(prog)prog.textContent='🧠 Claude revisando y corrigiendo…';
@@ -1031,16 +1047,17 @@ async function aiScoreLocation(name,lat,lng,poi){
 
   var claudeResult=null;
   try{
-    var cRes=await fetch('https://api.anthropic.com/v1/messages',{
+    var cRes=await fetchT('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,
+      body:JSON.stringify({model:'claude-sonnet-4-5-20250929',max_tokens:700,
         messages:[{role:'user',content:claudePrompt}]})
-    });
+    },60000);
     var cData=await cRes.json();
+    if(cData.error)console.warn('Claude API error:',cData.error);
     var cText=cData.content&&cData.content[0]?cData.content[0].text:'';
     claudeResult=parseAI(cText);
-  }catch(e){claudeResult=null}
+  }catch(e){console.warn('Claude failed:',e);claudeResult=null}
 
   // ── MERGE: Claude es la fuente principal, Gemini es fallback ─
   var merged={};
