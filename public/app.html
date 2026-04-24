@@ -729,17 +729,20 @@ async function scanNewLocation(){
   var dw=document.getElementById('dw');
   dw.innerHTML='<div class="pnl" style="text-align:center;padding:32px 20px">'+
     '<div class="sp" style="width:24px;height:24px;border-width:3px;margin:0 auto 14px"></div>'+
-    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">🤖 IA analizando con SAL13…</div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Investigando ubicación…</div>'+
     '<div style="font-size:10px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div style="font-size:10px;color:var(--tx3);margin-top:4px">Consultando Claude + Gemini en paralelo</div>'+
-    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px"></div>'+
+    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600"></div>'+
   '</div>';
 
   var prog=document.getElementById('aiProgress');
-  var steps=['🔍 Gemini: identificando zona y municipio…','🔍 Gemini: evaluando tráfico y NSE…','🔍 Gemini: analizando competencia…','🧠 Claude: revisando y corrigiendo scores…','⚡ Calculando score SAL13 final…'];
-  var si=0;var iv=setInterval(function(){if(prog&&si<steps.length){prog.textContent=steps[si++]}},1200);
+  var setProg=function(t){if(prog)prog.textContent=t};
 
-  var scores=await aiScoreLocation(name,lat,lng);
+  // Step 1: Google Places API — real POI data
+  setProg('📍 Google Places: buscando competidores y POIs…');
+  var poi=await researchLocation(lat,lng);
+
+  // Step 2 & 3: Sequential AI scoring with real data
+  var scores=await aiScoreLocation(name,lat,lng,poi);
   clearInterval(iv);
 
   btn.disabled=false;
@@ -771,7 +774,73 @@ async function scanNewLocation(){
   window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
 }
 
-async function aiScoreLocation(name,lat,lng){
+// ── GOOGLE PLACES RESEARCH ──────────────────────────────────────────────
+async function researchLocation(lat,lng){
+  var result={
+    supermarkets:[],convenienceStores:[],gasStations:[],
+    restaurants:[],bars:[],banks:[],schools:[],hotels:[],
+    pharmacies:[],raw:{}
+  };
+
+  async function searchNearby(types,radius){
+    try{
+      var r=await fetch('https://places.googleapis.com/v1/places:searchNearby',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'X-Goog-Api-Key':AK,
+          'X-Goog-FieldMask':'places.displayName,places.location,places.types,places.rating,places.userRatingCount'
+        },
+        body:JSON.stringify({
+          includedTypes:types,
+          maxResultCount:20,
+          locationRestriction:{circle:{center:{latitude:lat,longitude:lng},radius:parseFloat(radius)}}
+        })
+      });
+      var d=await r.json();
+      return(d.places||[]).map(function(p){return{name:p.displayName&&p.displayName.text||'',rating:p.rating||0,reviews:p.userRatingCount||0}});
+    }catch(e){return[]}
+  }
+
+  // Run searches in parallel by category
+  var searches=await Promise.all([
+    searchNearby(['supermarket','grocery_store'],1000),           // 0 competencia formal
+    searchNearby(['convenience_store'],800),                       // 1 tiendas conveniencia
+    searchNearby(['gas_station'],600),                             // 2 gasolineras
+    searchNearby(['restaurant','bar','night_club','cafe'],500),    // 3 nocturnos
+    searchNearby(['bank','atm'],1000),                             // 4 bancos
+    searchNearby(['school','university'],1000),                    // 5 colegios
+    searchNearby(['lodging'],1000),                                // 6 hoteles
+    searchNearby(['pharmacy','drugstore'],800)                     // 7 farmacias
+  ]);
+
+  result.supermarkets=searches[0];
+  result.convenienceStores=searches[1];
+  result.gasStations=searches[2];
+  result.restaurants=searches[3];
+  result.banks=searches[4];
+  result.schools=searches[5];
+  result.hotels=searches[6];
+  result.pharmacies=searches[7];
+  return result;
+}
+
+function poiSummary(poi){
+  var lines=[];
+  if(poi.supermarkets.length)lines.push('Supermercados/tiendas formales (1km): '+poi.supermarkets.length+' — '+poi.supermarkets.slice(0,5).map(function(p){return p.name}).join(', '));
+  else lines.push('Supermercados/tiendas formales (1km): 0 encontrados');
+  if(poi.convenienceStores.length)lines.push('Tiendas conveniencia (800m): '+poi.convenienceStores.length+' — '+poi.convenienceStores.slice(0,4).map(function(p){return p.name}).join(', '));
+  else lines.push('Tiendas conveniencia (800m): 0 encontradas');
+  lines.push('Gasolineras (600m): '+poi.gasStations.length+(poi.gasStations.length?(' — '+poi.gasStations.map(function(p){return p.name}).join(', ')):''));
+  lines.push('Restaurantes/bares (500m): '+poi.restaurants.length);
+  lines.push('Bancos/ATM (1km): '+poi.banks.length+(poi.banks.length?(' — '+poi.banks.slice(0,3).map(function(p){return p.name}).join(', ')):''));
+  lines.push('Escuelas/universidades (1km): '+poi.schools.length);
+  lines.push('Hoteles (1km): '+poi.hotels.length);
+  lines.push('Farmacias (800m): '+poi.pharmacies.length);
+  return lines.join('\n');
+}
+
+async function aiScoreLocation(name,lat,lng,poi){
   var defaults={TrafV:4,CapN:4,UbQ:4,Noct:4,Acc:5,Pob:4,Vis:5,CapD:4,Comp:6,Crec:4,Tur:2,DblV:4,Tick:4};
 
   // El Salvador–specific context for accurate scoring
@@ -789,20 +858,25 @@ async function aiScoreLocation(name,lat,lng){
     '• Pob alto (7-9): municipios densos del AMSS (Soyapango, Ilopango, Mejicanos), centros de Santa Ana y San Miguel. Pob bajo (1-3): zonas rurales, municipios pequeños.\n'+
     '• IMPORTANTE: si las coordenadas están en zona desconocida, rural o campo abierto → todos los scores bajos (2-4).';
 
+  // Real POI data from Google Places
+  var poiData=poi?poiSummary(poi):'No se pudo obtener datos de Google Places.';
+
   var basePrompt=
     'Eres SiteLo, experto en apertura de tiendas AMPM en El Salvador. Estudia la ubicación en coordenadas '+
     lat.toFixed(5)+', '+lng.toFixed(5)+' ("'+name+'").\n\n'+salCtx+'\n\n'+
+    'DATOS REALES DE GOOGLE PLACES (úsalos como base para el scoring):\n'+poiData+'\n\n'+
     'Red AMPM actual: '+getAllStoresContext()+'\n\n'+
     'REGLAS OBLIGATORIAS (NO se puede ignorar ninguna):\n'+
-    '1. NUNCA uses 5 como valor default. Razona cada variable desde la realidad salvadoreña.\n'+
-    '2. Identifica primero: ¿En qué municipio/departamento están esas coordenadas? ¿Qué tipo de vía? ¿NSE de la zona?\n'+
-    '3. TrafV: si está en CA-1/CA-4/Bypass → 7-9. Boulevard urbano → 5-7. Calle secundaria → 3-5. Zona rural → 1-3.\n'+
-    '4. CapN: solo alto si hay gasolinera 24h, hospital, casino, o ruta interurbana nocturna CONFIRMADA. Default conservador: 3-4.\n'+
-    '5. Comp: penalizá fuerte. Si hay Super Selectos o Walmart en zona → 3-5. Sin competencia formal → 7-8.\n'+
-    '6. Tick: NSE Escalón/Santa Elena → 8-9. NSE popular → 3-4. Zona media → 5-6.\n'+
-    '7. Tur: SOLO alto si es destino turístico conocido. San Salvador urbano sin atractivo → 1-2. Playa/volcán/Suchitoto → 6-8.\n'+
-    '8. Escala de rigor: ubicación promedio SV = 4.5-5.5 score final. Buena = 6-7. Excepcional = 7.5+. Un 10 es imposible.\n'+
-    '9. Si hay duda entre 2 valores, elige el MENOR (conservador).\n\n'+
+    '1. USA LOS DATOS DE GOOGLE PLACES como evidencia principal. Son datos reales, no estimaciones.\n'+
+    '2. NUNCA uses 5 como valor default. Cada variable debe justificarse con los datos reales o la geografía.\n'+
+    '3. Comp: basate en los supermercados y tiendas de conveniencia encontrados. 0 formales → Comp 7-8. 3+ formales → Comp 2-4.\n'+
+    '4. CapD: basate en bancos + escuelas + farmacias encontrados. 0 bancos y 0 escuelas → CapD bajo (2-3).\n'+
+    '5. Noct/CapN: basate en restaurantes/bares + hoteles encontrados. <3 restaurantes → Noct bajo (2-3). Gasolinera presente → CapN +1.\n'+
+    '6. Pob: bancos presentes confirman densidad media-alta. 0 bancos en 1km → zona escasa (Pob 2-4).\n'+
+    '7. TrafV: si está en CA-1/CA-4/Bypass → 7-9. Boulevard urbano → 5-7. Calle secundaria → 3-5. Zona rural → 1-3.\n'+
+    '8. Tick/NSE: farmacias de cadena (Farmacia San Nicolás, Farmacias Económicas) → NSE medio. Bancos presentes → NSE medio-alto.\n'+
+    '9. Tur: SOLO alto si es destino turístico conocido. San Salvador urbano sin atractivo → 1-2.\n'+
+    '10. Escala: promedio esperado = 4.5-5.5. Buena = 6-7. Excepcional = 7.5+. Si hay duda, elige el valor MENOR.\n\n'+
     'Responde ÚNICAMENTE con JSON válido, sin texto adicional:\n'+
     '{"TrafV":X,"CapN":X,"UbQ":X,"Noct":X,"Acc":X,"Pob":X,"Vis":X,"CapD":X,"Comp":X,"Crec":X,"Tur":X,"DblV":X,"Tick":X,'+
     '"municipio":"nombre","departamento":"nombre","zona":"descripción zona ej: boulevard comercial / carretera rural / colonia residencial","road":"nombre vía",'+
