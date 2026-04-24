@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SiteLo El Salvador V1.4</title>
+<title>SiteLo El Salvador V2.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -140,6 +140,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .exec-verdict{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .exec-reason{font-size:10px;color:var(--tx2);line-height:1.5}
 .exec-summary.ha .exec-verdict{color:var(--gn-a)}.exec-summary.hb .exec-verdict{color:var(--gn-b)}.exec-summary.hc .exec-verdict{color:var(--yl)}.exec-summary.hd .exec-verdict{color:var(--rd)}
+
+/* V2.0: History panel */
+.scan-history{padding:6px 8px;border-bottom:1px solid var(--brd);background:var(--bg2)}
+.scan-history .sh-title{font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.sh-item{display:flex;align-items:center;gap:5px;padding:3px 0;cursor:pointer;font-size:9px;border-bottom:1px solid rgba(128,128,128,.04)}
+.sh-item:last-child{border-bottom:none}
+.sh-item:hover .sh-nm{color:var(--red)}
+.sh-grade{font-weight:800;font-family:var(--mono);min-width:18px}
+.sh-nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx2)}
+.sh-sc{color:var(--tx3);font-family:var(--mono);font-size:8px}
+/* V2.0: History modal */
+.history-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.history-modal.show{display:flex}
+.history-box{background:var(--bg2);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:580px;width:95%;max-height:82vh;overflow-y:auto;padding:20px;position:relative}
+.history-box h2{font-size:14px;font-weight:700;margin-bottom:14px}
+.history-item{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;border-left:3px solid var(--red);transition:box-shadow .15s}
+.history-item:hover{box-shadow:var(--sh2)}
+.hi-date{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px}
+.hi-name{font-size:12px;font-weight:700;margin:3px 0}
+.hi-meta{font-size:10px;color:var(--tx2)}
+/* V2.0: Ideas modal */
+.ideas-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.ideas-modal.show{display:flex}
+.ideas-box{background:var(--bg2);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:560px;width:95%;max-height:80vh;overflow-y:auto;padding:20px;position:relative}
+.ideas-box h2{font-size:14px;font-weight:700;margin-bottom:14px}
+/* V2.0: Empty state AMPM logo */
+.empty-logo{opacity:.18;height:52px;margin-bottom:12px}
+/* V2.0: Scan button SVG */
+.btn-scan{display:flex;align-items:center;justify-content:center;gap:6px}
+
 /* Mobile */
 .mobile-menu{display:none;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:14px;color:var(--tx);margin-left:auto}
 /* Animations */
@@ -184,13 +214,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <img src="data:image/webp;base64,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" alt="AMPM" style="height:24px">
 <div class="sep"></div>
 <span style="font-size:12px;font-weight:700;color:var(--tx2)">SiteLo El Salvador</span>
-<span class="version">V1.4</span>
+<span class="version">V2.0</span>
 <div class="stats" id="stats"></div>
 <button class="mobile-menu" onclick="document.querySelector('.side').classList.toggle('mobile-open')">☰</button>
 <div class="rt">
 <span id="storeCount">3 tiendas</span>
+<button class="tbtn" onclick="findDeserts()" title="Buscar zonas sin AMPM (Desiertos)">🏜️</button>
 <button class="tbtn" onclick="toggleCompareMode()" id="compareBtn" title="Comparar tiendas">⚖️</button>
+<button class="tbtn" onclick="showHistory()" title="Historial de evaluaciones">📋</button>
 <button class="tbtn" onclick="shareCurrentWhatsApp()" title="Compartir por WhatsApp" style="color:#25D366">📲</button>
+<button class="tbtn" onclick="showIdeas()" title="Ideas de mejora con IA">💡</button>
+<button class="tbtn" onclick="v20CacheStats()" title="Caché y estadísticas">⚡</button>
 <button class="tbtn" onclick="toggleTheme()">🌙</button>
 </div>
 </header>
@@ -207,13 +241,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <div class="tags" id="tags"></div>
 <div class="slist" id="slist"></div>
 
+<div class="scan-history" id="scanHistory" style="display:none">
+<div class="sh-title"><span>📍 Evaluados recientemente</span><button onclick="showHistory()" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:9px;padding:0">Ver todo</button></div>
+<div id="histList"></div>
+</div>
 <div class="scan">
 <div class="st">🔍 Evaluar nueva ubicación</div>
 <div class="ig"><label>📍 Link Google Maps o coordenadas</label><input id="gmLink" placeholder="https://maps.google.com/... o 13.6921, -89.2277" oninput="handleLinkPaste()" style="font-size:10px"><div id="gmFeedback" style="font-size:9px;margin-top:2px;min-height:14px;color:var(--gn-a)"></div></div>
 <div style="display:flex;align-items:center;gap:8px;margin:4px 0"><div style="flex:1;height:1px;background:var(--brd)"></div><span style="font-size:8px;color:var(--tx3);font-weight:600">O MANUAL</span><div style="flex:1;height:1px;background:var(--brd)"></div></div>
 <div class="ig"><label>Nombre del punto</label><input id="nN" placeholder="Ej: Km 14 Carretera a Comasagua"></div>
 <div class="irow"><div class="ig"><label>Lat</label><input id="nLat" placeholder="13.6921" type="number" step="0.0001"></div><div class="ig"><label>Lng</label><input id="nLng" placeholder="-89.2277" type="number" step="0.0001"></div></div>
-<button class="btn" id="bScan" onclick="scanNewLocation()">🔎 Evaluar ubicación SAL13</button>
+<button class="btn btn-scan" id="bScan" onclick="scanNewLocation()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Escanear con AI (13 vars)</button>
 <div id="scanSt" style="margin-top:6px;font-size:10px"></div>
 </div>
 </aside>
@@ -226,18 +264,37 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#65a30d;display:inline-block"></span>B</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#eab308;display:inline-block"></span>C</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block"></span>D/F</span>
-<span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#7c3aed;display:inline-block"></span>POI</span>
+<span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #7c3aed;display:inline-block"></span>POI</span>
 </div>
 </div>
 <div class="dw" id="dw">
 <div class="empty" id="emp">
 <div style="font-size:32px;margin-bottom:8px">🇸🇻</div>
 <h3>SiteLo El Salvador</h3>
-<p>3 tiendas AMPM · Modelo SAL13 V1.4 · Seleccioná una tienda del panel izquierdo o evaluá una nueva ubicación.</p>
+<p>3 tiendas AMPM · Modelo SAL13 V2.0 · Seleccioná una tienda del panel izquierdo o evaluá una nueva ubicación.</p>
 </div>
 </div>
 </div>
 
+</div>
+
+
+<!-- History Modal -->
+<div class="history-modal" id="historyModal" onclick="if(event.target===this)closeHistory()">
+<div class="history-box">
+<button onclick="closeHistory()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)">✕ Cerrar</button>
+<h2>📋 Historial de Evaluaciones</h2>
+<div id="historyContent"><div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún. Evaluá una ubicación para comenzar.</div></div>
+<button onclick="clearHistory()" style="margin-top:12px;padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx3);font-size:11px;cursor:pointer;font-family:var(--font)">🗑️ Borrar historial</button>
+</div>
+</div>
+<!-- Ideas Modal -->
+<div class="ideas-modal" id="ideasModal" onclick="if(event.target===this)closeIdeas()">
+<div class="ideas-box">
+<button onclick="closeIdeas()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)">✕ Cerrar</button>
+<h2>💡 Ideas de Mejora — IA</h2>
+<div id="ideasContent"></div>
+</div>
 </div>
 
 <!-- Compare overlay -->
@@ -432,7 +489,7 @@ function renderKPIs(){
     kpiEl('Mejor tienda','var(--gn-a)',best.name+' ('+best.score+')')+
     
     kpiEl('Tiendas grado A','var(--gn-a)',aCount+' / '+DB.length)+
-    kpiEl('Modelo','var(--tx2)','SAL13 V1.4');
+    kpiEl('Modelo','var(--tx2)','SAL13 V2.0');
 }
 function kpiEl(label,color,val){return'<div class="kpi"><div><div class="kl">'+label+'</div><div class="kv" style="color:'+color+'">'+val+'</div></div></div>'}
 
@@ -552,7 +609,8 @@ function renderDetail(s){
     {name:'Ubicación',vars:['Vis','Acc','DblV','UbQ']},
     {name:'Mercado',vars:['Pob','Noct','Crec','Tick']},
     {name:'Competencia',vars:['Comp']},
-    {name:'Turismo',vars:['Tur']}
+    {name:'Turismo',vars:['Tur']},
+    {name:'🛵 Delivery SV',vars:s.delivScore>0?['delivScore']:['Noct','Pob']}
   ];
   html+='<div class="semaforo"><div class="semaforo-title">📊 Resumen por Categoría</div>';
   cats.forEach(function(cat){
@@ -600,16 +658,30 @@ function renderDetail(s){
     ])+
   '</div>';
 
-  // Delivery
-  if(s.delivPop){
-    html+='<div class="pnl"><h2>🛵 Delivery (Zona 5km)</h2>'+
+  // Delivery (El Salvador: 45% de ventas = delivery PedidosYa/Uber Eats)
+  var dScore=parseFloat(s.delivScore||0);
+  var dComp=parseFloat(s.delivComp||0);
+  if(dScore>0||s.delivPop){
+    var dColor=dScore>=7?'var(--gn-a)':dScore>=4?'var(--yl)':'var(--rd)';
+    var dLabel=dScore>=7?'🟢 Alto':dScore>=4?'🟡 Medio':'🔴 Bajo';
+    var dSat=dComp>=7?'🔴 Alta':dComp>=5?'🟡 Media':'🟢 Baja';
+    html+='<div class="pnl"><h2>🛵 Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'+
       '<div class="g2">'+
-      detailCard('Alcance Delivery',[
-        ['Población 5km','~'+Number(s.delivPop).toLocaleString()+' hab.'],
-        ['Competidores delivery',s.delivComp],
-        ['Saturación',s.delivComp>=8?'🔴 Alta':s.delivComp>=5?'🟡 Media':'🟢 Baja']
+      detailCard('Potencial Delivery',[
+        ['Score delivery',dScore.toFixed(1)+'/10'],
+        ['Nivel',dLabel],
+        ['Cobertura apps','5km radio (SV estándar)'],
+        ['Impacto ventas','~45% facturación']
       ])+
-      '</div></div>';
+      detailCard('Competencia Delivery',[
+        ['Saturación apps',dSat],
+        ['Score competencia',dComp.toFixed(1)+'/10'],
+        ['Restaurantes (500m)',(s.dimNight||0)+' detectados'],
+        ['Recomendación',dScore>=7&&dComp<=5?'✅ Abrir delivery activo':dScore>=4?'⚠️ Delivery moderado':'❌ Delivery limitado']
+      ])+
+      '</div>'+
+      (s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">📍 Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
+    '</div></div>';
   }
 
   // Share button
@@ -754,7 +826,8 @@ async function scanNewLocation(){
     departamento:'El Salvador',lat:lat,lng:lng,formato:'POI',
     road:scores.road||'—',roadType:0,
     corrections:scores.justificacion||'Evaluación automática IA',
-    modelVersion:'SAL13 · IA',delivPop:0,delivComp:0,
+    modelVersion:'SAL13 V2.0 · IA',delivPop:0,
+    delivScore:scores.delivScore||0,delivComp:scores.delivComp||0,
     dimTraffic:scores.TrafV,dimCommercial:scores.CapD,dimNSE:scores.Tick,
     dimNight:scores.Noct,dimResidential:scores.Pob,dimCompetition:scores.Comp,
     dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3
@@ -772,6 +845,9 @@ async function scanNewLocation(){
   var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
   window._tmpMarker.setStyle({fillColor:col});
   window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
+
+  // V2.0: Save to history
+  saveToHistory(s);
 }
 
 // ── GOOGLE PLACES RESEARCH ──────────────────────────────────────────────
@@ -864,23 +940,43 @@ async function aiScoreLocation(name,lat,lng,poi){
   var basePrompt=
     'Eres SiteLo, experto en apertura de tiendas AMPM en El Salvador. Estudia la ubicación en coordenadas '+
     lat.toFixed(5)+', '+lng.toFixed(5)+' ("'+name+'").\n\n'+salCtx+'\n\n'+
-    'DATOS REALES DE GOOGLE PLACES (úsalos como base para el scoring):\n'+poiData+'\n\n'+
-    'Red AMPM actual: '+getAllStoresContext()+'\n\n'+
-    'REGLAS OBLIGATORIAS (NO se puede ignorar ninguna):\n'+
+    'DATOS REALES DE GOOGLE PLACES (úsalos como base obligatoria para el scoring):\n'+poiData+'\n\n'+
+    'Red AMPM actual El Salvador: '+getAllStoresContext()+'\n\n'+
+    '═══ REGLAS DE SCORING OBLIGATORIAS (SAL13 V2.0) ═══\n'+
     '1. USA LOS DATOS DE GOOGLE PLACES como evidencia principal. Son datos reales, no estimaciones.\n'+
-    '2. NUNCA uses 5 como valor default. Cada variable debe justificarse con los datos reales o la geografía.\n'+
-    '3. Comp: basate en los supermercados y tiendas de conveniencia encontrados. 0 formales → Comp 7-8. 3+ formales → Comp 2-4.\n'+
-    '4. CapD: basate en bancos + escuelas + farmacias encontrados. 0 bancos y 0 escuelas → CapD bajo (2-3).\n'+
-    '5. Noct/CapN: basate en restaurantes/bares + hoteles encontrados. <3 restaurantes → Noct bajo (2-3). Gasolinera presente → CapN +1.\n'+
-    '6. Pob: bancos presentes confirman densidad media-alta. 0 bancos en 1km → zona escasa (Pob 2-4).\n'+
-    '7. TrafV: si está en CA-1/CA-4/Bypass → 7-9. Boulevard urbano → 5-7. Calle secundaria → 3-5. Zona rural → 1-3.\n'+
-    '8. Tick/NSE: farmacias de cadena (Farmacia San Nicolás, Farmacias Económicas) → NSE medio. Bancos presentes → NSE medio-alto.\n'+
-    '9. Tur: SOLO alto si es destino turístico conocido. San Salvador urbano sin atractivo → 1-2.\n'+
-    '10. Escala: promedio esperado = 4.5-5.5. Buena = 6-7. Excepcional = 7.5+. Si hay duda, elige el valor MENOR.\n\n'+
+    '2. NUNCA uses 5 como valor default. Cada variable debe justificarse con datos reales o geografía.\n'+
+    '3. Comp: 0 formales → Comp 7-8 (poca competencia). 3+ formales → Comp 2-4. Incluye Super Selectos, Walmart, tiendas gas.\n'+
+    '4. CapD: basate en bancos+escuelas+farmacias. 0 de todos → CapD 2-3. Banco presente → CapD mínimo 5.\n'+
+    '5. Noct/CapN: <3 restaurantes → Noct 2-3. Gasolinera presente → CapN sube 1. Hospital → CapN mínimo 6.\n'+
+    '6. Pob: 0 bancos en 1km = zona escasa (Pob 2-4). 3+ bancos = zona densa (Pob 7+).\n'+
+    '7. TrafV: CA-1/CA-4/CA-2/Bypass/Anillo Periférico → 7-9. Boulevard → 5-7. Secundaria → 3-5. Rural → 1-3.\n'+
+    '8. Tick: Farmacia cadena presente → Tick mínimo 4. Banco presente → Tick mínimo 5. Sin ninguno → Tick 2-3.\n'+
+    '9. Tur: SOLO alto si hay hotel, playa, volcán, o atracción turística en los datos. Urbano sin atractivo → 1-2.\n'+
+    '10. Escala conservadora: promedio esperado 4.5-5.5. Buena 6-7. Excepcional 7.5+. Duda → valor MENOR.\n\n'+
+    '═══ DELIVERY (EXCLUSIVO EL SALVADOR) ═══\n'+
+    'En El Salvador el 45% de las ventas AMPM son por delivery (PedidosYa/Uber Eats, radio 5km).\n'+
+    'delivScore (1-10): potencial de delivery de esta zona.\n'+
+    '  Alto 7-9: zona clase media-alta densa, muchos restaurantes, NSE bueno, smartphones frecuentes.\n'+
+    '  Medio 4-6: zona mixta, algo de delivery pero limitado.\n'+
+    '  Bajo 1-3: zona rural o NSE muy bajo, sin cobertura apps, sin poder adquisitivo para delivery.\n'+
+    'delivComp (1-10): competencia en delivery. Muchos restaurantes en 5km → delivComp alto (compiten por slot).\n\n'+
+    '═══ SISTEMA DE CORRECCIONES SAL13 (aplica antes de dar scores finales) ═══\n'+
+    'C0-Nocturno: Noct≥8 Y Comp≥7 → sube CapN 1 punto (máx 10). Zona nocturna sin competencia = oro.\n'+
+    'C1-Acceso muerto: Acc≤2 Y DblV≤2 → TrafV máximo 3 y Vis máximo 3. Sin acceso = sin tráfico.\n'+
+    'C2-Monopolio: Comp≥8 (casi sin competencia formal) → sube UbQ 1 punto.\n'+
+    'C3-Gas+Monopolio: gasolinera presente EN LOS DATOS Y Comp≥8 → sube CapN 1 punto adicional.\n'+
+    'C4-Mercado pobre: Tick≤2 Y Pob≤3 → baja Crec 1 punto. Zona sin poder adquisitivo no crece.\n'+
+    'C5-Saturada: Comp≤3 Y Tick≤3 Y Pob≤3 → baja todos los scores de mercado (Pob,Noct,Crec) 1 punto.\n'+
+    'C6-Rural total: TrafV≤2 Y Pob≤2 → delivScore máximo 2. Zona despoblada = sin delivery viable.\n'+
+    'C7-DelivBonus: delivScore≥7 Y Tick≥6 → sube CapD 1 punto. Delivery fuerte = mayor captive day.\n'+
+    'C8-Monopolio muerto: Comp≥9 PERO Noct≤2 Y Pob≤3 → baja Crec 2 puntos. Aislado pero sin mercado.\n'+
+    'C9-Turismo real: Tur≥7 SOLO si hay hotel, lodging, o nombre de zona turística en datos Places.\n'+
+    'C10-Canibalización AMPM: si otra AMPM está en la red dentro de 5km → baja Comp 2 puntos.\n\n'+
     'Responde ÚNICAMENTE con JSON válido, sin texto adicional:\n'+
     '{"TrafV":X,"CapN":X,"UbQ":X,"Noct":X,"Acc":X,"Pob":X,"Vis":X,"CapD":X,"Comp":X,"Crec":X,"Tur":X,"DblV":X,"Tick":X,'+
-    '"municipio":"nombre","departamento":"nombre","zona":"descripción zona ej: boulevard comercial / carretera rural / colonia residencial","road":"nombre vía",'+
-    '"justificacion":"3-4 oraciones: zona identificada, fortaleza principal, debilidad principal, recomendación"}';
+    '"delivScore":X,"delivComp":X,'+
+    '"municipio":"nombre","departamento":"nombre","zona":"descripción zona","road":"nombre vía",'+
+    '"justificacion":"3-4 oraciones: zona, fortaleza principal, debilidad principal, potencial delivery"}';
 
   function parseAI(text){
     if(!text)return null;
@@ -896,6 +992,11 @@ async function aiScoreLocation(name,lat,lng,poi){
         var rx=new RegExp('"'+v.k+'"\\s*:\\s*([0-9.]+)');
         var match=text.match(rx);
         if(match)r[v.k]=parseFloat(match[1]);
+      });
+      ['delivScore','delivComp'].forEach(function(k){
+        var rx=new RegExp('"'+k+'"\\s*:\\s*([0-9.]+)');
+        var match=text.match(rx);
+        if(match)r[k]=parseFloat(match[1]);
       });
       ['municipio','departamento','zona','road','justificacion'].forEach(function(k){
         var rx=new RegExp('"'+k+'"\\s*:\\s*"([^"]*)"');
@@ -968,6 +1069,14 @@ async function aiScoreLocation(name,lat,lng,poi){
   var j=best.justificacion||'Score basado en conocimiento geográfico de El Salvador';
   merged.justificacion=j+' · Verificar con visita presencial antes de decidir.';
 
+  // Delivery (El Salvador specific: 45% of sales via PedidosYa/Uber Eats)
+  var cdv=claudeResult?parseFloat(claudeResult.delivScore)||0:0;
+  var gdv=geminiResult?parseFloat(geminiResult.delivScore)||0:0;
+  merged.delivScore=Math.round(Math.max(1,Math.min(10,cdv>0?cdv:gdv>0?gdv:3))*10)/10;
+  var cdc=claudeResult?parseFloat(claudeResult.delivComp)||0:0;
+  var gdc=geminiResult?parseFloat(geminiResult.delivComp)||0:0;
+  merged.delivComp=Math.round(Math.max(1,Math.min(10,cdc>0?cdc:gdc>0?gdc:5))*10)/10;
+
   return merged;
 }
 
@@ -1025,7 +1134,7 @@ function shareStore(id){
     '⭐ DRS: '+s.drs+'/5\n'+
 
     '📍 '+s.municipio+', '+s.departamento+'\n\n'+
-    '_Modelo SAL13 V1.4 · AMPM Centroamérica_\n'+
+    '_Modelo SAL13 V2.0 · AMPM Centroamérica_\n'+
     'https://sitelo-sal.vercel.app';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
@@ -1136,6 +1245,167 @@ function injectChatUI(){
   panel.innerHTML='<div style="padding:10px 14px;background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:13px">🤖 SiteLo AI <span style="font-size:9px;opacity:.8">Claude + Gemini · El Salvador</span></div><button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button></div><div id="chatMsgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:4px;min-height:250px;max-height:360px"></div><div style="padding:8px;border-top:1px solid var(--brd);display:flex;gap:6px"><input id="chatInput" type="text" placeholder="Pregunta sobre tiendas, scores, ubicaciones..." style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx);font-family:var(--font);font-size:11px;outline:none" onkeydown="if(event.key===\'Enter\')sendChat()"><button onclick="sendChat()" style="padding:8px 12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-weight:700;font-size:11px;cursor:pointer">Enviar</button></div>';
   document.body.appendChild(panel);
 }
+
+
+// ============================================================
+// V2.0: HISTORY
+// ============================================================
+var HIST_KEY='sitelo_sal_v2_hist';
+function saveToHistory(s){
+  try{
+    var hist=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+    hist.unshift({id:s.id,name:s.name,score:s.score,grade:s.grade,lat:s.lat,lng:s.lng,
+      municipio:s.municipio||'—',departamento:s.departamento||'—',
+      zona:s.zona||'—',date:new Date().toLocaleDateString('es-SV'),
+      ts:Date.now(),justificacion:s.corrections||''});
+    if(hist.length>30)hist=hist.slice(0,30);
+    localStorage.setItem(HIST_KEY,JSON.stringify(hist));
+    renderHistSidebar();
+  }catch(e){}
+}
+function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]')}catch(e){return[]}}
+function renderHistSidebar(){
+  var hist=getHistory();
+  var el=document.getElementById('scanHistory');
+  var list=document.getElementById('histList');
+  if(!el||!list)return;
+  if(hist.length===0){el.style.display='none';return}
+  el.style.display='block';
+  var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
+  list.innerHTML=hist.slice(0,5).map(function(h){
+    return'<div class="sh-item" onclick="selectFromHistory(''+h.id+'')">'+
+      '<span class="sh-grade" style="color:'+(cols[h.grade]||'var(--tx3)')+'">'+h.grade+'</span>'+
+      '<span class="sh-nm">'+h.name+'</span>'+
+      '<span class="sh-sc">'+h.score+'</span></div>';
+  }).join('');
+}
+function selectFromHistory(id){
+  var s=DB.find(function(x){return x.id===id});
+  if(s){select(id)}
+}
+function showHistory(){
+  var hist=getHistory();
+  var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
+  var html=hist.length===0?'<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún.</div>':
+    hist.map(function(h){
+      return'<div class="history-item" onclick="selectFromHistory(''+h.id+'');closeHistory()">'+
+        '<div class="hi-date">'+h.date+'</div>'+
+        '<div class="hi-name" style="color:'+(cols[h.grade]||'var(--tx)')+'">'+h.grade+' · '+h.name+'</div>'+
+        '<div class="hi-meta">Score: '+h.score+' · '+h.municipio+', '+h.departamento+'</div>'+
+        (h.justificacion?'<div style="font-size:9px;color:var(--tx3);margin-top:4px;line-height:1.4">'+h.justificacion.slice(0,120)+'…</div>':'')+
+      '</div>';
+    }).join('');
+  document.getElementById('historyContent').innerHTML=html;
+  document.getElementById('historyModal').classList.add('show');
+}
+function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
+function clearHistory(){
+  if(confirm('¿Borrar todo el historial?')){
+    localStorage.removeItem(HIST_KEY);
+    renderHistSidebar();
+    document.getElementById('historyContent').innerHTML='<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Historial borrado.</div>';
+  }
+}
+
+// ============================================================
+// V2.0: DESERT FINDER
+// ============================================================
+function findDeserts(){
+  if(!DB.length){alert('Cargá los datos primero.');return}
+  var tiendas=DB.filter(function(s){return s.lat&&s.lng});
+  // El Salvador approximate grid
+  var minLat=13.15,maxLat=14.45,minLng=-90.15,maxLng=-87.65;
+  var step=0.12; // ~13km grid
+  var deserts=[];
+  for(var la=minLat;la<maxLat;la+=step){
+    for(var ln=minLng;ln<maxLng;ln+=step){
+      var clat=la+step/2,clng=ln+step/2;
+      var minDist=Infinity;
+      tiendas.forEach(function(s){
+        var d=Math.sqrt(Math.pow((s.lat-clat)*111,2)+Math.pow((s.lng-clng)*111*Math.cos(clat*Math.PI/180),2));
+        if(d<minDist)minDist=d;
+      });
+      if(minDist>20)deserts.push({lat:clat,lng:clng,dist:Math.round(minDist)});
+    }
+  }
+  // Show on map
+  if(window._desertLayer)map.removeLayer(window._desertLayer);
+  window._desertLayer=L.layerGroup().addTo(map);
+  deserts.sort(function(a,b){return b.dist-a.dist}).slice(0,15).forEach(function(d){
+    L.circleMarker([d.lat,d.lng],{radius:12,fillColor:'rgba(124,58,237,.2)',color:'#7c3aed',weight:2,fillOpacity:.3,dashArray:'4 4'}).addTo(window._desertLayer)
+      .bindTooltip('🏜️ Desierto AMPM<br>'+d.dist+'km sin tienda',{direction:'top'});
+  });
+  if(deserts.length){
+    var best=deserts[0];
+    map.setView([best.lat,best.lng],9);
+    alert('🏜️ '+deserts.length+' zonas sin AMPM detectadas.\nZona más lejana: '+deserts[0].dist+'km de la tienda más cercana.\nMarcadas en el mapa con círculos violetas.');
+  }else{
+    alert('La red AMPM cubre bien el territorio.');
+  }
+}
+
+// ============================================================
+// V2.0: IDEAS (AI suggestions)
+// ============================================================
+async function showIdeas(){
+  document.getElementById('ideasModal').classList.add('show');
+  var box=document.getElementById('ideasContent');
+  var ctx=sel?getStoreContext():getAllStoresContext();
+  box.innerHTML='<div style="text-align:center;padding:24px"><div class="sp" style="width:20px;height:20px;border-width:3px;margin:0 auto 10px"></div><div style="font-size:11px;color:var(--tx3)">Consultando IA…</div></div>';
+
+  var prompt='Eres experto en retail de conveniencia AMPM en El Salvador.\n\nCONTEXTO:\n'+ctx+'\n\nDa 5 ideas concretas y accionables para mejorar la red AMPM en El Salvador. Cada idea debe ser: específica, basada en los datos, y con un impacto estimado en ventas o expansión.\n\nFormato: JSON array [{titulo:string,descripcion:string,impacto:string,urgencia:alta|media|baja}]';
+
+  var resp='';
+  try{
+    var r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    var d=await r.json();
+    resp=d.content&&d.content[0]?d.content[0].text:'';
+  }catch(e){}
+
+  var ideas=null;
+  try{var m=resp.match(/\[\s*\{[\s\S]*?\}\s*\]/);if(m)ideas=JSON.parse(m[0])}catch(e){}
+
+  if(ideas&&ideas.length){
+    var urgColors={alta:'var(--rd)',media:'var(--yl)',baja:'var(--gn-a)'};
+    box.innerHTML=ideas.map(function(idea,i){
+      return'<div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:10px;border-left:3px solid '+(urgColors[idea.urgencia]||'var(--brd)')+'">'+
+        '<div style="font-size:10px;font-weight:700;color:var(--tx);margin-bottom:4px">'+(i+1)+'. '+idea.titulo+'</div>'+
+        '<div style="font-size:10px;color:var(--tx2);line-height:1.5;margin-bottom:6px">'+idea.descripcion+'</div>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<span style="font-size:8px;background:rgba(21,128,61,.08);color:var(--gn-a);padding:2px 7px;border-radius:4px;font-weight:600">💰 '+idea.impacto+'</span>'+
+          '<span style="font-size:8px;background:rgba(0,0,0,.04);color:'+(urgColors[idea.urgencia]||'var(--tx3)')+';padding:2px 7px;border-radius:4px;font-weight:600">⚡ Urgencia: '+idea.urgencia+'</span>'+
+        '</div></div>';
+    }).join('');
+  }else{
+    box.innerHTML='<div style="color:var(--rd);font-size:11px;padding:12px">No se pudo generar ideas. Verificá la conexión con la API.</div>';
+  }
+}
+function closeIdeas(){document.getElementById('ideasModal').classList.remove('show')}
+
+// ============================================================
+// V2.0: CACHE STATS
+// ============================================================
+function v20CacheStats(){
+  var hist=getHistory();
+  var keys=Object.keys(localStorage).filter(function(k){return k.startsWith('sitelo')});
+  var totalKB=0;
+  keys.forEach(function(k){totalKB+=localStorage.getItem(k).length/1024});
+  var msg='⚡ SiteLo SAL V2.0 — Estado del sistema\n\n'+
+    '📋 Evaluaciones en historial: '+hist.length+'\n'+
+    '💾 Almacenamiento local: '+totalKB.toFixed(1)+' KB\n'+
+    '🏪 Tiendas AMPM cargadas: '+DB.filter(function(s){return!s.id.startsWith('POI')}).length+'\n'+
+    '📍 POIs evaluados (sesión): '+DB.filter(function(s){return s.id.startsWith('POI')}).length+'\n'+
+    '🔑 Modelo: SAL13 V2.0\n'+
+    '🗓️ Última evaluación: '+(hist.length?hist[0].date:'—');
+  alert(msg);
+}
+
+// ── Init history on load ─────────────────────────────────────────────────────
+setTimeout(renderHistSidebar, 800);
 
 // ============================================================
 // THEME
