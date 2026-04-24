@@ -226,7 +226,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#65a30d;display:inline-block"></span>B</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#eab308;display:inline-block"></span>C</span>
 <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block"></span>D/F</span>
-<span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:4px;background:#6b7280;border-radius:1px;display:inline-block"></span>Comp.</span>
+<span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:50%;background:#7c3aed;display:inline-block"></span>POI</span>
 </div>
 </div>
 <div class="dw" id="dw">
@@ -705,75 +705,134 @@ function handleLinkPaste(){
   }
 }
 
-function scanNewLocation(){
+async function scanNewLocation(){
   var name=document.getElementById('nN').value||'Nueva ubicación';
   var lat=parseFloat(document.getElementById('nLat').value);
   var lng=parseFloat(document.getElementById('nLng').value);
   var st=document.getElementById('scanSt');
+  var btn=document.getElementById('bScan');
 
   if(!lat||!lng){st.innerHTML='<span style="color:var(--rd)">⚠️ Ingresá coordenadas válidas</span>';return}
 
-  st.innerHTML='<span class="sp"></span> Calculando score SAL13…';
+  // Spinner & disable button
+  btn.disabled=true;
+  st.innerHTML='<span class="sp"></span> IA investigando ubicación…';
+  document.getElementById('emp').style.display='none';
 
-  // Add temporary marker
+  // Temp purple marker while loading
   if(window._tmpMarker)map.removeLayer(window._tmpMarker);
   window._tmpMarker=L.circleMarker([lat,lng],{radius:8,fillColor:'#7c3aed',color:'#fff',weight:2,fillOpacity:.9}).addTo(map);
-  window._tmpMarker.bindTooltip('<b>'+name+'</b><br>📍 Nueva ubicación').openTooltip();
+  window._tmpMarker.bindTooltip('<b>'+name+'</b><br>🔍 Analizando…').openTooltip();
   map.setView([lat,lng],14);
 
-  // Create placeholder store object for rendering
-  var newStore={
-    id:'POI-NEW',name:name,zona:'—',municipio:'—',departamento:'El Salvador',
-    lat:lat,lng:lng,formato:'POI',road:'—',roadType:0,
-    score:0,grade:'?',gradeReal:'?',drs:0,ebitda:0,corrections:'',modelVersion:'SAL13',
-    // Default values – user should input actual vars or use Sitelo skill
-    TrafV:5,CapN:5,UbQ:5,Noct:5,Acc:5,Pob:5,Vis:5,CapD:5,Comp:5,Crec:5,Tur:3,DblV:5,Tick:5,
-    dimTraffic:5,dimCommercial:5,dimNSE:5,dimNight:5,dimResidential:5,dimCompetition:5,dimTourism:3,dimInfrastructure:5,
-    delivPop:0,delivComp:0
-  };
-
-  // Show manual scoring form
-  setTimeout(function(){
-    st.innerHTML='';
-    showScanForm(newStore,lat,lng);
-  },500);
-}
-
-function showScanForm(s,lat,lng){
-  document.getElementById('emp').style.display='none';
+  // Show loading panel
   var dw=document.getElementById('dw');
-  dw.innerHTML='<div class="pnl"><h2>📝 Evaluación Manual — '+s.name+'</h2>'+
-    '<p style="font-size:10px;color:var(--tx2);margin-bottom:12px">Ingresá los valores del 1-10 para cada variable del modelo SAL13. Para una evaluación completa usá el Skill Sitelo.</p>'+
-    '<table class="vt"><thead><tr><th>Variable</th><th>Descripción</th><th>Valor (1-10)</th></tr></thead><tbody>'+
-    VARS_SAL.map(function(v){
-      return'<tr><td class="mf">'+v.k+'</td><td style="color:var(--tx2)">'+v.label+'</td><td><input type="range" min="1" max="10" step=".5" value="5" id="sv_'+v.k+'" oninput="document.getElementById(\'sv_lbl_'+v.k+'\').textContent=this.value" style="width:80px"> <span id="sv_lbl_'+v.k+'" class="mf" style="font-size:10px">5</span></td></tr>';
-    }).join('')+
-    '</tbody></table>'+
-    '<button class="btn" style="margin-top:10px" onclick="computeScanScore(\''+s.name+'\','+lat+','+lng+')">⚡ Calcular Score SAL13</button></div>';
-}
+  dw.innerHTML='<div class="pnl" style="text-align:center;padding:32px 20px">'+
+    '<div class="sp" style="width:24px;height:24px;border-width:3px;margin:0 auto 14px"></div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">🤖 IA analizando con SAL13…</div>'+
+    '<div style="font-size:10px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
+    '<div style="font-size:10px;color:var(--tx3);margin-top:4px">Consultando Claude + Gemini en paralelo</div>'+
+    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px"></div>'+
+  '</div>';
 
-function computeScanScore(name,lat,lng){
-  var s={id:'POI-CALC',name:name,zona:'—',municipio:'Evaluación',departamento:'El Salvador',lat:lat,lng:lng,formato:'POI',road:'—',roadType:0,corrections:'',modelVersion:'SAL13 Manual',delivPop:0,delivComp:0,dimTraffic:5,dimCommercial:5,dimNSE:5,dimNight:5,dimResidential:5,dimCompetition:5,dimTourism:3,dimInfrastructure:5,nseM2:null,rentM2:null,drs:3};
+  var prog=document.getElementById('aiProgress');
+  var steps=['Estimando tráfico vehicular…','Evaluando zona y NSE…','Contando competencia…','Analizando captación nocturna…','Calculando score final…'];
+  var si=0;var iv=setInterval(function(){if(prog&&si<steps.length){prog.textContent=steps[si++]}},1200);
+
+  var scores=await aiScoreLocation(name,lat,lng);
+  clearInterval(iv);
+
+  btn.disabled=false;
+  st.innerHTML='';
+
+  // Build store object from AI scores
+  var s={
+    id:'POI-CALC',name:name,zona:scores.zona||'—',municipio:scores.municipio||'Evaluación AI',
+    departamento:'El Salvador',lat:lat,lng:lng,formato:'POI',
+    road:scores.road||'—',roadType:0,
+    corrections:scores.justificacion||'Evaluación automática IA',
+    modelVersion:'SAL13 · IA',delivPop:0,delivComp:0,
+    dimTraffic:scores.TrafV,dimCommercial:scores.CapD,dimNSE:scores.Tick,
+    dimNight:scores.Noct,dimResidential:scores.Pob,dimCompetition:scores.Comp,
+    dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3
+  };
+  VARS_SAL.forEach(function(v){s[v.k]=scores[v.k]||5});
 
   var total=0;
-  VARS_SAL.forEach(function(v){
-    var val=parseFloat(document.getElementById('sv_'+v.k)?.value||5);
-    s[v.k]=val;total+=val*v.w;
-  });
+  VARS_SAL.forEach(function(v){total+=s[v.k]*v.w});
   s.score=Math.round(total*1000)/1000;
   s.grade=getGrade(s.score);
   s.gradeReal=s.grade;
 
+  dw.innerHTML=renderDetail(s);
 
+  var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
+  window._tmpMarker.setStyle({fillColor:col});
+  window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
+}
 
-  document.getElementById('dw').innerHTML=renderDetail(s);
+async function aiScoreLocation(name,lat,lng){
+  var defaults={TrafV:5,CapN:5,UbQ:5,Noct:5,Acc:5,Pob:5,Vis:5,CapD:5,Comp:5,Crec:5,Tur:3,DblV:5,Tick:5};
 
-  // Update map marker
-  if(window._tmpMarker){
-    var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
-    window._tmpMarker.setStyle({fillColor:col});
-    window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
+  var prompt='Eres SiteLo, sistema experto de selección de ubicaciones AMPM El Salvador. '+
+    'Analiza la ubicación en coordenadas '+lat.toFixed(5)+', '+lng.toFixed(5)+' ("'+name+'").\n'+
+    'Red AMPM actual: '+getAllStoresContext()+'\n\n'+
+    'REGLAS DE SCORING (sé MUY ESTRICTO y realista):\n'+
+    '- La escala es 1-10. Un 10 es prácticamente imposible. Un 8+ requiere tráfico masivo + alta densidad + excelente NSE.\n'+
+    '- Una ubicación promedio en El Salvador: 4-5.5. Buena: 6-7. Excelente: 7-8. Excepcional: 8+.\n'+
+    '- Penalizá fuerte por: zona rural, acceso difícil, competencia intensa, baja densidad, sin flujo nocturno.\n'+
+    '- Comp: 10=sin competidores AMPM ni tiendas 24h, 1=saturado de competidores directos.\n'+
+    '- Tur: solo score alto si es zona turística reconocida (playa, volcán, etc.).\n'+
+    '- DblV: 10=bulevar principal o carretera CA con alta velocidad, 5=calle secundaria, 1=callejón.\n\n'+
+    'Variables SAL13:\n'+
+    'TrafV=tráfico vehicular, CapN=captación nocturna, UbQ=calidad/prestigio zona, Noct=actividad nocturna,\n'+
+    'Acc=accesibilidad física, Pob=población residente 1km, Vis=visibilidad desde vía, CapD=captación diurna,\n'+
+    'Comp=nivel competencia (inverso), Crec=potencial crecimiento zona, Tur=flujo turístico, DblV=tipo vía, Tick=NSE/ticket\n\n'+
+    'Responde ÚNICAMENTE con JSON válido (sin texto antes ni después):\n'+
+    '{"TrafV":X,"CapN":X,"UbQ":X,"Noct":X,"Acc":X,"Pob":X,"Vis":X,"CapD":X,"Comp":X,"Crec":X,"Tur":X,"DblV":X,"Tick":X,'+
+    '"municipio":"nombre municipio","zona":"descripción breve zona","road":"nombre calle o carretera",'+
+    '"justificacion":"2-3 oraciones sobre los scores clave y por qué esta ubicación tiene ese potencial"}';
+
+  function parseAI(text){
+    try{var m=text.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{}}catch(e){return{}}
   }
+
+  var gP=fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],
+      generationConfig:{temperature:0.3}})
+  }).then(function(r){return r.json()}).then(function(d){
+    try{return parseAI(d.candidates[0].content.parts[0].text)}catch(e){return{}}
+  }).catch(function(){return{}});
+
+  var cP=fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
+      messages:[{role:'user',content:prompt}]})
+  }).then(function(r){return r.json()}).then(function(d){
+    try{return parseAI(d.content[0].text)}catch(e){return{}}
+  }).catch(function(){return{}});
+
+  var res=await Promise.all([gP,cP]);
+  var g=res[0],c=res[1];
+
+  // Average numeric fields; fallback to default if both fail
+  var merged={};
+  VARS_SAL.forEach(function(v){
+    var gv=parseFloat(g[v.k])||0,cv=parseFloat(c[v.k])||0;
+    var val=gv&&cv?(gv+cv)/2:gv||cv||defaults[v.k];
+    merged[v.k]=Math.round(Math.max(1,Math.min(10,val))*10)/10;
+  });
+
+  // String fields: prefer Claude, fallback Gemini
+  merged.municipio=c.municipio||g.municipio||'El Salvador';
+  merged.zona=c.zona||g.zona||'—';
+  merged.road=c.road||g.road||'—';
+  var j=(c.justificacion||g.justificacion||'Score calculado por IA basado en conocimiento geográfico de El Salvador');
+  merged.justificacion=j+' · Verificar con visita presencial antes de decidir.';
+
+  return merged;
 }
 
 // ============================================================
