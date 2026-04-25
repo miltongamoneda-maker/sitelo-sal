@@ -1178,72 +1178,168 @@ function exportPDF(){
   if(s){VARS_SAL.forEach(function(v){st[v.k]=parseFloat(s[v.k])||0});}
 
   var grade=st.grade||getGrade(st.score);
-  var gradeColor=grade==='A+'||grade==='A'?'#15803d':grade==='B'?'#65a30d':grade==='C'?'#ca8a04':'#dc2626';
+  var gColor=grade==='A+'||grade==='A'?'#15803d':grade==='B'?'#65a30d':grade==='C'?'#ca8a04':'#dc2626';
+  var gColorLight=grade==='A+'||grade==='A'?'#dcfce7':grade==='B'?'#ecfccb':grade==='C'?'#fef9c3':'#fee2e2';
   var corrections=s?(s.corrections||''):(document.querySelector('#dw .pnl p')?.textContent||'');
+  var verdict=grade==='A+'||grade==='A'?'UBICACIÓN RECOMENDADA':grade==='B'?'UBICACIÓN VIABLE':grade==='C'?'UBICACIÓN MARGINAL':'NO RECOMENDADO';
+  var verdictIcon=grade==='A+'||grade==='A'?'✅':grade==='B'?'☑️':grade==='C'?'⚠️':'⛔';
 
   var w=window.open('','_blank','width=900,height=1200');
   if(!w){alert('El navegador bloqueó la ventana. Permití pop-ups en sitelo-sal.vercel.app');return}
 
-  var rows='';
-  if(s||(calc&&st.Pob)){
-    rows=VARS_SAL.map(function(v){
-      var val=parseFloat(st[v.k])||0;
-      var color=val>=7?'#15803d':val>=5.5?'#65a30d':val>=4?'#ca8a04':'#dc2626';
-      return'<tr><td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-weight:600;font-size:14px">'+v.k+'</td>'+
-             '<td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-family:monospace;font-size:14px;color:'+color+';font-weight:700;text-align:right">'+val.toFixed(1)+'</td>'+
-             '<td style="padding:6px 10px;border-bottom:1px solid #e5e5e5;font-size:11px;color:#666;text-align:right">'+(v.w*100).toFixed(1)+'%</td></tr>';
-    }).join('');
+  // Variables agrupadas por dimensión (más visual)
+  var dims=[
+    {label:'Tráfico y flujo',vars:['TrafV','Vis','DblV'],icon:'🚗'},
+    {label:'Ubicación y acceso',vars:['UbQ','Acc'],icon:'📍'},
+    {label:'Mercado',vars:['Pob','Crec','Tick'],icon:'👥'},
+    {label:'Competencia',vars:['Comp'],icon:'🏪'},
+    {label:'Capacidad',vars:['CapD','CapN','Noct'],icon:'⏰'},
+    {label:'Turismo',vars:['Tur'],icon:'🏖️'}
+  ];
+
+  function dimAvg(varList){
+    var sum=0,n=0;
+    varList.forEach(function(k){var v=parseFloat(st[k]);if(!isNaN(v)){sum+=v;n++}});
+    return n>0?sum/n:0;
   }
 
+  // Bar visual: ancho proporcional al valor 1-10
+  function barBlock(label,val,key,weight){
+    var color=val>=7?'#15803d':val>=5.5?'#65a30d':val>=4?'#ca8a04':'#dc2626';
+    var pct=Math.max(0,Math.min(100,val*10));
+    return '<div style="margin-bottom:6px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'+
+        '<span style="font-size:12px;font-weight:600">'+label+(key?' <span style="color:#999;font-size:10px;font-weight:500">('+key+')</span>':'')+'</span>'+
+        '<span style="font-family:monospace;font-weight:700;font-size:14px;color:'+color+'">'+val.toFixed(1)+(weight?' <span style="color:#999;font-size:10px;font-weight:500">·'+(weight*100).toFixed(1)+'%</span>':'')+'</span>'+
+      '</div>'+
+      '<div style="height:8px;background:#f0efeb;border-radius:4px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+color+',_'+color+'cc);border-radius:4px"></div>'+
+      '</div></div>';
+  }
+
+  // Build dimension cards
+  var dimCards=dims.map(function(d){
+    var avg=dimAvg(d.vars);
+    var color=avg>=7?'#15803d':avg>=5.5?'#65a30d':avg>=4?'#ca8a04':'#dc2626';
+    return '<div style="padding:10px 12px;background:#fff;border:1px solid #e5e5e5;border-radius:10px;border-left:4px solid '+color+'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+        '<div style="font-size:11px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:.4px">'+d.icon+' '+d.label+'</div>'+
+        '<div style="font-size:20px;font-weight:800;font-family:monospace;color:'+color+'">'+avg.toFixed(1)+'</div>'+
+      '</div>'+
+      '<div style="font-size:9px;color:#999">'+d.vars.join(' · ')+'</div>'+
+    '</div>';
+  }).join('');
+
+  // Build all variable bars
+  var allBars=VARS_SAL.map(function(v){
+    var val=parseFloat(st[v.k])||0;
+    return barBlock(v.k,val,'',v.w);
+  }).join('');
+
+  // POI cards visual
   var poiSection='';
   if(s&&s.poi_counts){
-    var keys=Object.keys(s.poi_counts).slice(0,12);
-    poiSection='<div style="margin-top:14px;padding:10px;background:#f5f5f0;border-radius:6px"><div style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📍 POIs cercanos (Google Places)</div>'+
-      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 12px;font-size:13px">'+
-      keys.map(function(k){return'<div><b>'+k+':</b> '+s.poi_counts[k]+'</div>'}).join('')+
+    var poiOrder=['supermercados','conveniencia','gasolineras','bancos','farmacias','restaurantes','hoteles','escuelas','hospitales','bares','shopping','cafes'];
+    var poiVisible=poiOrder.filter(function(k){return s.poi_counts[k]>0}).slice(0,12);
+    poiSection='<div style="padding:12px;background:linear-gradient(135deg,#1B2A4A05,#1B2A4A02);border:1px solid #e5e5e5;border-radius:10px">'+
+      '<div style="font-size:12px;font-weight:700;color:#1B2A4A;margin-bottom:8px">📍 POIs cercanos (Google Places · radio 500-1500m)</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+
+      poiVisible.map(function(k){
+        var n=s.poi_counts[k];
+        var nColor=n>=10?'#dc2626':n>=5?'#ca8a04':n>=2?'#65a30d':'#15803d';
+        return '<div style="padding:6px 8px;background:#fff;border:1px solid #e5e5e5;border-radius:6px;text-align:center">'+
+          '<div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.3px">'+k+'</div>'+
+          '<div style="font-size:18px;font-weight:800;font-family:monospace;color:'+nColor+';margin-top:2px">'+n+'</div>'+
+        '</div>';
+      }).join('')+
+      '</div></div>';
+  }
+
+  // Delivery special box (45% de ventas SV)
+  var deliverySection='';
+  if(st.delivScore){
+    var dColor=st.delivScore>=7?'#15803d':st.delivScore>=5.5?'#65a30d':st.delivScore>=4?'#ca8a04':'#dc2626';
+    deliverySection='<div style="margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#7c3aed10,#7c3aed04);border:1px solid #7c3aed40;border-radius:10px;display:flex;align-items:center;justify-content:space-between">'+
+      '<div><div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.4px">🛵 Delivery (45% ventas SV)</div>'+
+      '<div style="font-size:11px;color:#666;margin-top:2px">PedidosYa · Uber Eats · radio 5km</div></div>'+
+      '<div style="text-align:right">'+
+      '<div style="font-size:24px;font-weight:800;font-family:monospace;color:'+dColor+'">'+st.delivScore.toFixed(1)+'<span style="font-size:14px;color:#999">/10</span></div>'+
+      (st.delivComp?'<div style="font-size:10px;color:#666">Comp: '+st.delivComp.toFixed(1)+'</div>':'')+
       '</div></div>';
   }
 
   w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>SiteLo SV — '+st.name+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">'+
     '<style>'+
-    '@page{size:A4;margin:14mm}'+
+    '@page{size:A4;margin:10mm}'+
     '@media print{body{margin:0}.noprint{display:none}}'+
     '*{margin:0;padding:0;box-sizing:border-box;font-family:"Plus Jakarta Sans",system-ui,sans-serif}'+
-    'body{padding:18px;color:#1B2A4A;line-height:1.4;background:#fff}'+
-    '.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #E63B2E;padding-bottom:10px;margin-bottom:14px}'+
-    '.head h1{font-size:24px;font-weight:800;color:#1B2A4A}'+
-    '.head .meta{font-size:13px;color:#666;margin-top:4px}'+
-    '.brand{font-size:14px;font-weight:700;color:#E63B2E;text-align:right}'+
-    '.brand .small{font-size:10px;color:#999;font-weight:500;letter-spacing:.5px;text-transform:uppercase}'+
-    '.heroPDF{display:flex;align-items:center;gap:24px;padding:18px;background:linear-gradient(135deg,'+gradeColor+'10,'+gradeColor+'04);border:2px solid '+gradeColor+';border-radius:14px;margin-bottom:14px}'+
-    '.gradeBig{font-size:120px;font-weight:900;font-family:monospace;color:'+gradeColor+';line-height:.95;letter-spacing:-4px}'+
-    '.scoreInfo h2{font-size:30px;font-weight:800}'+
-    '.scoreInfo .scoreLine{font-size:24px;font-family:monospace;font-weight:700;color:'+gradeColor+';margin-top:4px}'+
-    '.scoreInfo .where{font-size:15px;color:#666;margin-top:6px}'+
-    '.section{margin-bottom:12px}'+
-    '.section h3{font-size:13px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #e5e5e5;padding-bottom:4px;margin-bottom:8px}'+
-    '.justBox{padding:12px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;font-size:13px;line-height:1.5}'+
-    'table{width:100%;border-collapse:collapse}'+
-    '.foot{margin-top:14px;padding-top:8px;border-top:1px solid #e5e5e5;font-size:10px;color:#999;text-align:center}'+
-    '.printBtn{position:fixed;top:20px;right:20px;padding:12px 24px;background:#E63B2E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15)}'+
+    'body{padding:14px 18px;color:#1B2A4A;line-height:1.35;background:#fff;font-size:11px}'+
+    '.printBtn{position:fixed;top:20px;right:20px;padding:14px 28px;background:#E63B2E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:999}'+
+    '.printBtn:hover{filter:brightness(1.1)}'+
     '</style></head><body>'+
     '<button class="printBtn noprint" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>'+
-    '<div class="head">'+
-      '<div><h1>'+st.name+'</h1><div class="meta">'+(st.municipio||'')+' · '+(st.departamento||'')+(st.road&&st.road!=='—'?' · '+st.road:'')+'</div></div>'+
-      '<div class="brand">SiteLo El Salvador<div class="small">AMPM · Modelo SAL13 V2.5</div></div>'+
-    '</div>'+
-    '<div class="heroPDF">'+
-      '<div class="gradeBig">'+grade+'</div>'+
-      '<div class="scoreInfo">'+
-        '<h2>'+(grade==='A+'||grade==='A'?'Ubicación recomendada':grade==='B'?'Ubicación viable':grade==='C'?'Ubicación marginal':'NO recomendado')+'</h2>'+
-        '<div class="scoreLine">Score: '+(st.score||0).toFixed(3)+' / 10</div>'+
-        '<div class="where">Zona: '+(st.zona||'—')+(st.delivScore?' · Delivery: '+st.delivScore.toFixed(1)+'/10':'')+'</div>'+
+    // ── Header con branding fuerte ──
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:4px solid #E63B2E;margin-bottom:12px">'+
+      '<div>'+
+        '<div style="font-size:11px;color:#E63B2E;font-weight:800;letter-spacing:1px;text-transform:uppercase">am:pm · SiteLo El Salvador</div>'+
+        '<div style="font-size:22px;font-weight:800;color:#1B2A4A;margin-top:2px">'+st.name+'</div>'+
+        '<div style="font-size:12px;color:#666;margin-top:2px">'+(st.municipio||'')+(st.departamento?', '+st.departamento:'')+(st.road&&st.road!=='—'?' · '+st.road:'')+(st.zona&&st.zona!=='—'?' · '+st.zona:'')+'</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-size:9px;color:#999;font-weight:600;letter-spacing:.5px;text-transform:uppercase">Modelo</div>'+
+        '<div style="font-size:13px;font-weight:700;color:#7c3aed;font-family:monospace">SAL13 V2.5</div>'+
+        '<div style="font-size:9px;color:#999;margin-top:2px">'+new Date().toLocaleDateString('es-SV',{day:'2-digit',month:'short',year:'numeric'})+'</div>'+
       '</div>'+
     '</div>'+
-    (corrections?'<div class="section"><h3>📝 Justificación / Análisis IA</h3><div class="justBox">'+corrections+'</div></div>':'')+
-    (rows?'<div class="section"><h3>📊 Variables del modelo SAL13</h3><table><thead><tr><th style="text-align:left;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Variable</th><th style="text-align:right;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Valor</th><th style="text-align:right;padding:6px 10px;background:#f5f5f0;font-size:11px;color:#666;text-transform:uppercase">Peso</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'')+
+
+    // ── Hero gigante: nota + verdict ──
+    '<div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:stretch;padding:18px 20px;background:'+gColorLight+';border:3px solid '+gColor+';border-radius:16px;margin-bottom:14px">'+
+      '<div style="display:flex;align-items:center;justify-content:center;width:130px;height:130px;background:#fff;border:5px solid '+gColor+';border-radius:24px">'+
+        '<div style="font-size:90px;font-weight:900;font-family:monospace;color:'+gColor+';line-height:1;letter-spacing:-3px">'+grade+'</div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;justify-content:center">'+
+        '<div style="font-size:12px;color:'+gColor+';font-weight:700;letter-spacing:1.5px;text-transform:uppercase">'+verdictIcon+' Veredicto</div>'+
+        '<div style="font-size:26px;font-weight:800;color:#1B2A4A;line-height:1.15;margin-top:2px">'+verdict+'</div>'+
+        '<div style="display:flex;gap:14px;margin-top:8px;align-items:baseline">'+
+          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">Score</span><div style="font-size:32px;font-weight:900;font-family:monospace;color:'+gColor+';line-height:1">'+(st.score||0).toFixed(2)+'<span style="font-size:14px;color:#999">/10</span></div></div>'+
+          '<div style="height:36px;width:1px;background:'+gColor+'40"></div>'+
+          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">Grado</span><div style="font-size:18px;font-weight:700;color:'+gColor+';line-height:1.3">'+grade+'</div></div>'+
+          (st.drs?'<div style="height:36px;width:1px;background:'+gColor+'40"></div>'+
+          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">DRS</span><div style="font-size:18px;font-weight:700;color:#1B2A4A;line-height:1.3">'+st.drs+'/5</div></div>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── Resumen por dimensión (6 cards) ──
+    '<div style="margin-bottom:14px">'+
+      '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">📊 Resumen por categoría</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'+dimCards+'</div>'+
+    '</div>'+
+
+    // ── Justificación IA ──
+    (corrections?'<div style="margin-bottom:14px;padding:14px 16px;background:#fffbeb;border-left:5px solid #f59e0b;border-radius:8px">'+
+      '<div style="font-size:11px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📝 Análisis IA — Correcciones aplicadas</div>'+
+      '<div style="font-size:12px;color:#1B2A4A;line-height:1.55">'+corrections+'</div>'+
+    '</div>':'')+
+
+    // ── Bars de las 13 variables ──
+    '<div style="margin-bottom:12px">'+
+      '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">📈 Detalle de las 13 variables (modelo SAL13)</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;padding:12px;background:#f5f5f0;border-radius:10px">'+allBars+'</div>'+
+    '</div>'+
+
+    // ── Delivery (SV específico) ──
+    deliverySection+
+
+    // ── POIs cercanos ──
     poiSection+
-    '<div class="foot">Generado '+new Date().toLocaleDateString('es-SV',{day:'numeric',month:'long',year:'numeric'})+' · sitelo-sal.vercel.app · AMPM Centroamérica</div>'+
+
+    // ── Footer ──
+    '<div style="margin-top:14px;padding-top:8px;border-top:2px solid #E63B2E;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#999">'+
+      '<div>Generado por <b style="color:#E63B2E">am:pm SiteLo</b> · Edge Function + Google Places + Gemini 2.5</div>'+
+      '<div>sitelo-sal.vercel.app · AMPM Centroamérica</div>'+
+    '</div>'+
     '</body></html>');
   w.document.close();
   setTimeout(function(){w.focus();w.print()},400);
