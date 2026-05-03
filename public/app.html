@@ -666,7 +666,7 @@ function renderDetail(s){
 
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   html+='<button onclick="exportPDF()" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📄 Descargar PDF</button>';
-  html+='<button onclick="shareStore(''+s.id+'')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">Compartir por WhatsApp</button>';
+  html+='<button onclick="shareStore(\''+s.id+'\')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">Compartir por WhatsApp</button>';
   html+='</div>';
 
   return html;
@@ -786,11 +786,15 @@ async function scanNewLocation(){
   '</div>';
 
   try {
+    var controller=new AbortController();
+    var tId=setTimeout(function(){controller.abort()},45000);
     var resp=await fetch('https://mrijxjpohtsjfshwqouw.supabase.co/functions/v1/scan-location',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({lat:lat,lng:lng,name:name})
+      body:JSON.stringify({lat:lat,lng:lng,name:name}),
+      signal:controller.signal
     });
+    clearTimeout(tId);
     if(!resp.ok){throw new Error('HTTP '+resp.status)}
     var scores=await resp.json();
 
