@@ -777,68 +777,66 @@ async function scanNewLocation(){
 
   if(!lat||!lng){st.innerHTML='<span style="color:var(--rd)">⚠️ Ingresá coordenadas válidas</span>';return}
 
-  // Spinner & disable button
   btn.disabled=true;
   st.innerHTML='<span class="sp"></span> IA investigando ubicación…';
   document.getElementById('emp').style.display='none';
 
-  // Temp purple marker while loading
   if(window._tmpMarker)map.removeLayer(window._tmpMarker);
   window._tmpMarker=L.circleMarker([lat,lng],{radius:8,fillColor:'#7c3aed',color:'#fff',weight:2,fillOpacity:.9}).addTo(map);
   window._tmpMarker.bindTooltip('<b>'+name+'</b><br>🔍 Analizando…').openTooltip();
   map.setView([lat,lng],14);
 
-  // Show loading panel
   var dw=document.getElementById('dw');
   dw.innerHTML='<div class="pnl" style="text-align:center;padding:32px 20px">'+
     '<div class="sp" style="width:24px;height:24px;border-width:3px;margin:0 auto 14px"></div>'+
     '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Investigando ubicación…</div>'+
     '<div style="font-size:10px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600"></div>'+
+    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600">⚡ Consultando 25 POIs + IA…</div>'+
   '</div>';
 
-  var prog=document.getElementById('aiProgress');
-  var setProg=function(t){if(prog)prog.textContent=t};
+  try {
+    var resp=await fetch('https://mrijxjpohtsjfshwqouw.supabase.co/functions/v1/scan-location',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lat:lat,lng:lng,name:name})
+    });
+    if(!resp.ok){throw new Error('HTTP '+resp.status)}
+    var scores=await resp.json();
 
-  // Step 1: Google Places API — real POI data
-  setProg('📍 Google Places: buscando competidores y POIs…');
-  var poi=await researchLocation(lat,lng);
+    btn.disabled=false;
+    st.innerHTML=scores._cache?'<span style="color:#15803d;font-size:9px">⚡ Caché (30d) · '+Math.round((scores._elapsed_ms||0))+'ms</span>':'<span style="color:var(--tx3);font-size:9px">✅ '+Math.round((scores._elapsed_ms||0)/1000)+'s · Edge v5</span>';
 
-  // Step 2 & 3: Sequential AI scoring with real data
-  var scores=await aiScoreLocation(name,lat,lng,poi);
-  clearInterval(iv);
+    var s={
+      id:'POI-CALC',name:name,zona:scores.zona||'—',municipio:scores.municipio||'Evaluación AI',
+      departamento:scores.departamento||'El Salvador',lat:lat,lng:lng,formato:'POI',
+      road:scores.road||'—',roadType:0,
+      corrections:scores.justificacion||'Evaluación automática IA',
+      modelVersion:'SAL13 V2.0 · Edge v5',delivPop:0,
+      delivScore:scores.delivScore||0,delivComp:scores.delivComp||0,
+      dimTraffic:scores.TrafV,dimCommercial:scores.CapD,dimNSE:scores.Tick,
+      dimNight:scores.Noct,dimResidential:scores.Pob,dimCompetition:scores.Comp,
+      dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3
+    };
+    VARS_SAL.forEach(function(v){s[v.k]=scores[v.k]||5});
 
-  btn.disabled=false;
-  st.innerHTML='';
+    var total=0;
+    VARS_SAL.forEach(function(v){total+=s[v.k]*v.w});
+    s.score=Math.round(total*1000)/1000;
+    s.grade=getGrade(s.score);
+    s.gradeReal=s.grade;
 
-  // Build store object from AI scores
-  var s={
-    id:'POI-CALC',name:name,zona:scores.zona||'—',municipio:scores.municipio||'Evaluación AI',
-    departamento:'El Salvador',lat:lat,lng:lng,formato:'POI',
-    road:scores.road||'—',roadType:0,
-    corrections:scores.justificacion||'Evaluación automática IA',
-    modelVersion:'SAL13 V2.0 · IA',delivPop:0,
-    delivScore:scores.delivScore||0,delivComp:scores.delivComp||0,
-    dimTraffic:scores.TrafV,dimCommercial:scores.CapD,dimNSE:scores.Tick,
-    dimNight:scores.Noct,dimResidential:scores.Pob,dimCompetition:scores.Comp,
-    dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3
-  };
-  VARS_SAL.forEach(function(v){s[v.k]=scores[v.k]||5});
+    dw.innerHTML=renderDetail(s);
 
-  var total=0;
-  VARS_SAL.forEach(function(v){total+=s[v.k]*v.w});
-  s.score=Math.round(total*1000)/1000;
-  s.grade=getGrade(s.score);
-  s.gradeReal=s.grade;
+    var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
+    window._tmpMarker.setStyle({fillColor:col});
+    window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
 
-  dw.innerHTML=renderDetail(s);
-
-  var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
-  window._tmpMarker.setStyle({fillColor:col});
-  window._tmpMarker.setTooltipContent('<b>'+name+'</b><br>'+s.grade+' · '+s.score);
-
-  // V2.0: Save to history
-  saveToHistory(s);
+    saveToHistory(s);
+  } catch(err) {
+    btn.disabled=false;
+    st.innerHTML='<span style="color:var(--rd)">❌ '+err.message+'</span>';
+    dw.innerHTML='<div class="pnl" style="padding:20px;text-align:center;color:var(--rd)">Error: '+err.message+'</div>';
+  }
 }
 
 // ── GOOGLE PLACES RESEARCH ──────────────────────────────────────────────
