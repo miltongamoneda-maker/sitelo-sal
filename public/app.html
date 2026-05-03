@@ -568,46 +568,49 @@ function renderDetail(s){
   var html='';
 
   var gradeColor=(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--gn-b)':g==='C'?'var(--yl)':'var(--rd)';
-  var gradeBg=(g==='A+'||g==='A')?'rgba(21,128,61,.08)':g==='B'?'rgba(77,124,15,.08)':g==='C'?'rgba(202,138,4,.08)':'rgba(220,38,38,.08)';
-  var gradeBrd=(g==='A+'||g==='A')?'rgba(21,128,61,.25)':g==='B'?'rgba(77,124,15,.25)':g==='C'?'rgba(202,138,4,.25)':'rgba(220,38,38,.25)';
   var verdict='',vColor='';
-  if(g==='A+'||g==='A'){verdict='Ubicación recomendada para apertura';vColor='var(--gn-a)'}
+  if(g==='A+'||g==='A'){verdict='Recomendada para apertura';vColor='var(--gn-a)'}
   else if(g==='B'){verdict='Viable con reservas';vColor='var(--gn-b)'}
-  else if(g==='C'){verdict='Marginal — revisar antes de abrir';vColor='var(--yl)'}
+  else if(g==='C'){verdict='Marginal — revisar';vColor='var(--yl)'}
   else{verdict='No recomendada';vColor='var(--rd)'}
 
   var dScore=parseFloat(s.delivScore||0);
-  var comp=parseFloat(s.Comp||0);
-  var tur=parseFloat(s.Tur||0);
-  var traf=parseFloat(s.TrafV||0);
-  var capN=parseFloat(s.CapN||0);
-  function bdc(v){return v>=7?'bd-g':v>=4?'bd-y':'bd-r'}
 
-  // ── HERO CARD ──
-  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;overflow:hidden;box-shadow:var(--sh2)">';
-  html+='<div style="height:4px;background:'+gradeColor+'"></div>';
-  html+='<div style="padding:16px;display:flex;gap:14px;align-items:flex-start">';
-  // Grade box
-  html+='<div style="width:80px;height:80px;border-radius:14px;border:2.5px solid '+gradeBrd+';background:'+gradeBg+';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">';
-  html+='<div style="font-size:40px;font-weight:800;font-family:var(--mono);color:'+gradeColor+';line-height:1">'+g+'</div>';
-  html+='<div style="font-size:10px;font-weight:700;color:'+gradeColor+';opacity:.7;margin-top:2px">'+s.score+'</div>';
-  html+='</div>';
-  // Info
+  // ── HEADER CARD (Option D) ──
+  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:14px 16px;box-shadow:var(--sh2)">';
+  html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">';
   html+='<div style="flex:1;min-width:0">';
-  html+='<div style="font-size:17px;font-weight:700;color:var(--tx);line-height:1.2">'+s.name+'</div>';
-  html+='<div style="font-size:10px;color:var(--tx3);margin-top:2px;font-family:var(--mono)">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>';
+  html+='<div style="font-size:16px;font-weight:700;color:var(--tx);line-height:1.2">'+s.name+'</div>';
+  html+='<div style="font-size:10px;color:var(--tx3);margin-top:3px;font-family:var(--mono)">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>';
   html+='<div style="font-size:11px;font-weight:600;color:'+vColor+';margin-top:5px">'+verdict+'</div>';
-  html+='<div class="bds" style="margin-top:8px">';
-  html+='<span class="bd '+bdc(traf)+'">Tráfico '+traf.toFixed(1)+'</span>';
-  html+='<span class="bd '+bdc(capN)+'">Nocturno '+capN.toFixed(1)+'</span>';
-  html+='<span class="bd '+(comp<=3?'bd-g':comp<=6?'bd-y':'bd-r')+'">Comp. '+comp.toFixed(1)+'</span>';
-  if(dScore>0)html+='<span class="bd '+bdc(dScore)+'">🛵 '+dScore.toFixed(1)+'</span>';
-  if(tur>=4)html+='<span class="bd '+bdc(tur)+'">Tur. '+tur.toFixed(1)+'</span>';
-  html+='<span class="bd bd-p">'+s.modelVersion+'</span>';
-  html+='</div></div></div>';
-  // Justification
+  html+='</div>';
+  html+='<div style="text-align:right;flex-shrink:0">';
+  html+='<div style="font-size:54px;font-weight:800;font-family:var(--mono);color:'+gradeColor+';line-height:1">'+g+'</div>';
+  html+='<div style="font-size:11px;font-weight:700;color:var(--tx2);margin-top:-2px">'+s.score+' / 10</div>';
+  html+='<div style="font-size:9px;color:var(--tx3);margin-top:1px">'+s.modelVersion+'</div>';
+  html+='</div>';
+  html+='</div>';
+  html+='<div style="height:1px;background:var(--brd);margin:12px 0"></div>';
+  var topVars=[
+    {k:'TrafV',label:'Tráfico'},{k:'CapN',label:'Cap. nocturna'},
+    {k:'UbQ',label:'Calidad lote'},{k:'Acc',label:'Accesibilidad'},
+    {k:'Comp',label:'Competencia'},{k:'Noct',label:'Nocturno'},
+    {k:'Pob',label:'Residencial'},{k:'Tick',label:'NSE/Ticket'}
+  ];
+  if(dScore>0)topVars.push({k:'delivScore',label:'Delivery SV'});
+  if(parseFloat(s.Tur||0)>=3)topVars.push({k:'Tur',label:'Turismo'});
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 12px">';
+  topVars.forEach(function(v){
+    var val=parseFloat(s[v.k]||0);
+    var vc=val>=7?'var(--gn-a)':val>=5?'var(--yl)':'var(--rd)';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:2px 0">';
+    html+='<span style="color:var(--tx3)">'+v.label+'</span>';
+    html+='<span style="font-weight:700;color:'+vc+';font-family:var(--mono)">'+val.toFixed(1)+'</span>';
+    html+='</div>';
+  });
+  html+='</div>';
   if(s.corrections){
-    html+='<div style="padding:10px 16px 14px;font-size:10px;color:var(--tx3);line-height:1.6;border-top:1px solid rgba(128,128,128,.08)">'+s.corrections+'</div>';
+    html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(128,128,128,.1);font-size:10px;color:var(--tx3);line-height:1.6">'+s.corrections+'</div>';
   }
   html+='</div>';
 
@@ -618,10 +621,10 @@ function renderDetail(s){
     {name:'Mercado',ico:'🏪',vars:['Pob','Noct','Crec','Tick']},
     {name:'Competencia',ico:'⚔️',vars:['Comp'],invert:true},
     {name:'Turismo',ico:'🏖️',vars:['Tur']},
-    {name:'Delivery SV',ico:'🛵',fixed:dScore>0?dScore:null}
+    {name:'Delivery SV',ico:'🛫',fixed:dScore>0?dScore:null}
   ];
-  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:14px;box-shadow:var(--sh)">';
-  html+='<div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">📊 Resumen por Categoría</div>';
+  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px;box-shadow:var(--sh)">';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">📊 Por Categoría</div>';
   cats.forEach(function(cat){
     var avg;
     if(cat.fixed!=null){avg=cat.fixed}
@@ -629,14 +632,11 @@ function renderDetail(s){
     else return;
     var pct=Math.round(avg/10*100);
     var bc=cat.invert?(avg<=3?'var(--rd)':avg<=6?'var(--yl)':'var(--gn-a)'):(avg>=7?'var(--gn-a)':avg>=5?'var(--yl)':'var(--rd)');
-    html+='<div style="margin-bottom:9px">';
-    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">';
-    html+='<span style="font-size:11px;color:var(--tx2)">'+cat.ico+' '+cat.name+'</span>';
-    html+='<span style="font-size:12px;font-weight:700;color:'+bc+';font-family:var(--mono)">'+avg.toFixed(1)+'</span>';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">';
+    html+='<span style="font-size:11px;color:var(--tx2);width:110px;flex-shrink:0">'+cat.ico+' '+cat.name+'</span>';
+    html+='<div style="flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+bc+';border-radius:4px"></div></div>';
+    html+='<span style="font-size:12px;font-weight:700;color:'+bc+';font-family:var(--mono);width:28px;text-align:right">'+avg.toFixed(1)+'</span>';
     html+='</div>';
-    html+='<div style="height:7px;background:var(--bg3);border-radius:4px;overflow:hidden">';
-    html+='<div style="width:'+pct+'%;height:100%;background:'+bc+';border-radius:4px"></div>';
-    html+='</div></div>';
   });
   html+='</div>';
 
@@ -673,10 +673,9 @@ function renderDetail(s){
   var dScoreF=parseFloat(s.delivScore||0);
   var dComp=parseFloat(s.delivComp||0);
   if(dScoreF>0||s.delivPop){
-    var dColor=dScoreF>=7?'var(--gn-a)':dScoreF>=4?'var(--yl)':'var(--rd)';
     var dLabel=dScoreF>=7?'🟢 Alto':dScoreF>=4?'🟡 Medio':'🔴 Bajo';
     var dSat=dComp>=7?'🔴 Alta':dComp>=5?'🟡 Media':'🟢 Baja';
-    html+='<div class="pnl"><h2>🛵 Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'+
+    html+='<div class="pnl"><h2>🛫 Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'+
       '<div class="g2">'+
       detailCard('Potencial Delivery',[
         ['Score',dScoreF.toFixed(1)+'/10'],['Nivel',dLabel],
@@ -692,7 +691,7 @@ function renderDetail(s){
   }
 
   // ── SHARE ──
-  html+='<button onclick="shareStore(\''+s.id+'\')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
+  html+='<button onclick="shareStore(''+s.id+'')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
 
   return html;
 }
