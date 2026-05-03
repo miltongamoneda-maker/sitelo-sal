@@ -183,6 +183,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
   .g2{grid-template-columns:1fr}
   .ebox{grid-template-columns:1fr 1fr}
 }
+
+@media print {
+  body { background: white !important; }
+  .login-overlay, .hdr, .kpi-bar, .side, #map, .scan,
+  .empty, .tbtn, #stats, .mobile-menu, button.btn,
+  button[onclick*="shareStore"], button[onclick*="exportPDF"] { display: none !important; }
+  .app { display: block !important; }
+  .mn { display: block !important; grid-template-columns: 1fr !important; }
+  .dw { display: block !important; overflow: visible !important; height: auto !important;
+        padding: 0 !important; background: white !important; }
+  .pnl, .g2, .hero, .semaforo, .radar-wrap { break-inside: avoid; }
+  * { color-adjust: exact; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 </head><body>
 
@@ -560,138 +573,101 @@ function select(id){
   if(map&&markers[id])map.setView([s.lat,s.lng],14);
   document.getElementById('emp').style.display='none';
   var dw=document.getElementById('dw');
-  dw.innerHTML=renderDetail(s);
+  dw.innerHTML=renderDetail(s);dw.scrollTop=0;
 }
 
 function renderDetail(s){
   var g=s.grade,gc_=gc(g);
   var html='';
 
-  var gradeColor=(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--gn-b)':g==='C'?'var(--yl)':'var(--rd)';
-  var verdict='',vColor='';
-  if(g==='A+'||g==='A'){verdict='Recomendada para apertura';vColor='var(--gn-a)'}
-  else if(g==='B'){verdict='Viable con reservas';vColor='var(--gn-b)'}
-  else if(g==='C'){verdict='Marginal — revisar';vColor='var(--yl)'}
-  else{verdict='No recomendada';vColor='var(--rd)'}
+  var verdict='',color='';
+  if(g==='A+'||g==='A'){verdict='Ubicacion recomendada para apertura';color='ha'}
+  else if(g==='B'){verdict='Ubicacion viable con reservas';color='hb'}
+  else if(g==='C'){verdict='Ubicacion marginal — revisar antes de abrir';color='hc'}
+  else{verdict='No recomendada';color='hd'}
+  html+='<div class="exec-summary '+color+'"><div class="exec-verdict">'+verdict+'</div>';
+  if(s.corrections){html+='<div class="exec-reason">'+s.corrections+'</div>'}
+  html+='</div>';
+
+  html+='<div class="hero h'+gc_+'">'
+    +'<div class="rng r'+gc_+'"><div class="gl g'+gc_+'">'+g+'</div></div>'
+    +'<div class="hi">'
+      +'<h1>'+s.name+'</h1>'
+      +'<div class="sub">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>'
+      +'<div class="bds">'
+        +'<span class="bd bd-n">Score: '+s.score+'</span>'
+        +'<span class="bd bd-p">'+s.modelVersion+'</span>'
+        +(s.formato?'<span class="bd bd-n">'+s.formato+'</span>':'')
+      +'</div>'
+    +'</div></div>';
 
   var dScore=parseFloat(s.delivScore||0);
-
-  // ── HEADER CARD (Option D) ──
-  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:14px 16px;box-shadow:var(--sh2)">';
-  html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">';
-  html+='<div style="flex:1;min-width:0">';
-  html+='<div style="font-size:16px;font-weight:700;color:var(--tx);line-height:1.2">'+s.name+'</div>';
-  html+='<div style="font-size:10px;color:var(--tx3);margin-top:3px;font-family:var(--mono)">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>';
-  html+='<div style="font-size:11px;font-weight:600;color:'+vColor+';margin-top:5px">'+verdict+'</div>';
-  html+='</div>';
-  html+='<div style="text-align:right;flex-shrink:0">';
-  html+='<div style="font-size:54px;font-weight:800;font-family:var(--mono);color:'+gradeColor+';line-height:1">'+g+'</div>';
-  html+='<div style="font-size:11px;font-weight:700;color:var(--tx2);margin-top:-2px">'+s.score+' / 10</div>';
-  html+='<div style="font-size:9px;color:var(--tx3);margin-top:1px">'+s.modelVersion+'</div>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div style="height:1px;background:var(--brd);margin:12px 0"></div>';
-  var topVars=[
-    {k:'TrafV',label:'Tráfico'},{k:'CapN',label:'Cap. nocturna'},
-    {k:'UbQ',label:'Calidad lote'},{k:'Acc',label:'Accesibilidad'},
-    {k:'Comp',label:'Competencia'},{k:'Noct',label:'Nocturno'},
-    {k:'Pob',label:'Residencial'},{k:'Tick',label:'NSE/Ticket'}
-  ];
-  if(dScore>0)topVars.push({k:'delivScore',label:'Delivery SV'});
-  if(parseFloat(s.Tur||0)>=3)topVars.push({k:'Tur',label:'Turismo'});
-  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 12px">';
-  topVars.forEach(function(v){
-    var val=parseFloat(s[v.k]||0);
-    var vc=val>=7?'var(--gn-a)':val>=5?'var(--yl)':'var(--rd)';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:2px 0">';
-    html+='<span style="color:var(--tx3)">'+v.label+'</span>';
-    html+='<span style="font-weight:700;color:'+vc+';font-family:var(--mono)">'+val.toFixed(1)+'</span>';
-    html+='</div>';
-  });
-  html+='</div>';
-  if(s.corrections){
-    html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(128,128,128,.1);font-size:10px;color:var(--tx3);line-height:1.6">'+s.corrections+'</div>';
-  }
-  html+='</div>';
-
-  // ── CATEGORY BARS ──
   var cats=[
-    {name:'Tráfico y Flujo',ico:'🚦',vars:['TrafV','CapN','CapD']},
-    {name:'Ubicación',ico:'📍',vars:['Vis','Acc','DblV','UbQ']},
-    {name:'Mercado',ico:'🏪',vars:['Pob','Noct','Crec','Tick']},
-    {name:'Competencia',ico:'⚔️',vars:['Comp'],invert:true},
-    {name:'Turismo',ico:'🏖️',vars:['Tur']},
-    {name:'Delivery SV',ico:'🛫',fixed:dScore>0?dScore:null}
+    {name:'Trafico y Flujo',vars:['TrafV','CapN','CapD']},
+    {name:'Ubicacion',vars:['Vis','Acc','DblV','UbQ']},
+    {name:'Mercado',vars:['Pob','Noct','Crec','Tick']},
+    {name:'Competencia',vars:['Comp']},
+    {name:'Turismo',vars:['Tur']},
+    {name:'Delivery SV',vars:dScore>0?['delivScore']:['Noct','Pob']}
   ];
-  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px;box-shadow:var(--sh)">';
-  html+='<div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">📊 Por Categoría</div>';
+  html+='<div class="semaforo"><div class="semaforo-title">Resumen por Categoria</div>';
   cats.forEach(function(cat){
-    var avg;
-    if(cat.fixed!=null){avg=cat.fixed}
-    else if(cat.vars&&cat.vars.length){avg=0;cat.vars.forEach(function(v){avg+=parseFloat(s[v]||0)});avg=avg/cat.vars.length}
-    else return;
-    var pct=Math.round(avg/10*100);
-    var bc=cat.invert?(avg<=3?'var(--rd)':avg<=6?'var(--yl)':'var(--gn-a)'):(avg>=7?'var(--gn-a)':avg>=5?'var(--yl)':'var(--rd)');
-    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">';
-    html+='<span style="font-size:11px;color:var(--tx2);width:110px;flex-shrink:0">'+cat.ico+' '+cat.name+'</span>';
-    html+='<div style="flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+bc+';border-radius:4px"></div></div>';
-    html+='<span style="font-size:12px;font-weight:700;color:'+bc+';font-family:var(--mono);width:28px;text-align:right">'+avg.toFixed(1)+'</span>';
-    html+='</div>';
+    var avg=0;cat.vars.forEach(function(v){avg+=(s[v]||0)});avg=avg/cat.vars.length;
+    var color=avg>=7?'#15803d':avg>=4?'#ca8a04':'#dc2626';
+    html+='<div class="semaforo-item"><span class="semaforo-dot" style="background:'+color+'"></span><span class="semaforo-label">'+cat.name+'</span><span class="semaforo-value" style="color:'+color+'">'+avg.toFixed(1)+' '+(avg>=7?'alto':avg>=4?'medio':'bajo')+'</span></div>';
   });
   html+='</div>';
 
-  // ── RADAR ──
-  html+='<div class="radar-wrap"><h2>🕸 Perfil de Variables SAL13</h2>'+drawRadar(s)+'</div>';
+  html+='<div class="radar-wrap"><h2>Perfil de Variables SAL13</h2>'+drawRadar(s)+'</div>';
 
-  // ── VARIABLE TABLE ──
-  html+='<div class="pnl"><h2>📐 Variables del Modelo SAL13</h2><table class="vt"><thead><tr><th>Variable</th><th>Peso</th><th>Valor</th><th>Contribución</th><th>Rango</th></tr></thead><tbody>';
+  html+='<div class="pnl"><h2>Variables del Modelo SAL13</h2><table class="vt"><thead><tr><th>Variable</th><th>Peso</th><th>Valor</th><th>Contribucion</th><th>Rango</th></tr></thead><tbody>';
   VARS_SAL.forEach(function(v){
     var val=parseFloat(s[v.k]||0);
     var contrib=(val*v.w).toFixed(3);
     var barPct=Math.round(val/10*100);
     var barColor=val>=7?'var(--gn-a)':val>=4?'var(--yl)':'var(--rd)';
-    html+='<tr><td class="mf">'+v.k+'</td><td style="color:var(--tx3)">'+Math.round(v.w*100)+'%</td>'+
-      '<td><b class="mf" style="color:'+barColor+'">'+val.toFixed(1)+'</b></td>'+
-      '<td class="mf">'+contrib+'</td>'+
-      '<td><span class="bar"><i style="width:'+barPct+'%;background:'+barColor+'"></i></span></td></tr>';
+    html+='<tr><td class="mf">'+v.k+'</td><td style="color:var(--tx3)">'+Math.round(v.w*100)+'%</td>'
+      +'<td><b class="mf" style="color:'+barColor+'">'+val.toFixed(1)+'</b></td>'
+      +'<td class="mf">'+contrib+'</td>'
+      +'<td><span class="bar"><i style="width:'+barPct+'%;background:'+barColor+'"></i></span></td></tr>';
   });
   html+='</tbody></table></div>';
 
-  // ── LOCATION + DIMS ──
-  html+='<div class="g2">'+
-    detailCard('📍 Ubicación',[
+  html+='<div class="g2">'
+    +detailCard('Ubicacion',[
       ['Zona',s.zona||'—'],['Municipio',s.municipio],['Departamento',s.departamento],
       ['Carretera',s.road||'—'],['Road Type',s.roadType?'Tipo '+s.roadType:'—']
-    ])+
-    detailCard('📦 Dimensiones',[
-      ['Tráfico',s.dimTraffic||'—'],['Comercial',s.dimCommercial||'—'],['NSE',s.dimNSE||'—'],
+    ])
+    +detailCard('Dimensiones',[
+      ['Trafico',s.dimTraffic||'—'],['Comercial',s.dimCommercial||'—'],['NSE',s.dimNSE||'—'],
       ['Nocturno',s.dimNight||'—'],['Competencia',s.dimCompetition||'—'],['Turismo',s.dimTourism||'—']
-    ])+
-  '</div>';
+    ])
+  +'</div>';
 
-  // ── DELIVERY ──
   var dScoreF=parseFloat(s.delivScore||0);
   var dComp=parseFloat(s.delivComp||0);
   if(dScoreF>0||s.delivPop){
-    var dLabel=dScoreF>=7?'🟢 Alto':dScoreF>=4?'🟡 Medio':'🔴 Bajo';
-    var dSat=dComp>=7?'🔴 Alta':dComp>=5?'🟡 Media':'🟢 Baja';
-    html+='<div class="pnl"><h2>🛫 Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'+
-      '<div class="g2">'+
-      detailCard('Potencial Delivery',[
+    var dLabel=dScoreF>=7?'Alto':dScoreF>=4?'Medio':'Bajo';
+    var dSat=dComp>=7?'Alta':dComp>=5?'Media':'Baja';
+    html+='<div class="pnl"><h2>Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'
+      +'<div class="g2">'
+      +detailCard('Potencial Delivery',[
         ['Score',dScoreF.toFixed(1)+'/10'],['Nivel',dLabel],
-        ['Radio apps','5km (SV estándar)'],['Impacto','~45% facturación']
-      ])+
-      detailCard('Competencia Delivery',[
-        ['Saturación',dSat],['Score comp.',dComp.toFixed(1)+'/10'],
-        ['Recomendación',dScoreF>=7&&dComp<=5?'✅ Delivery activo':dScoreF>=4?'⚠️ Delivery moderado':'❌ Limitado']
-      ])+
-      '</div>'+
-      (s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
-    '</div>';
+        ['Radio apps','5km (SV estandar)'],['Impacto','~45% facturacion']
+      ])
+      +detailCard('Competencia Delivery',[
+        ['Saturacion',dSat],['Score comp.',dComp.toFixed(1)+'/10'],
+        ['Recomendacion',dScoreF>=7&&dComp<=5?'Delivery activo':dScoreF>=4?'Delivery moderado':'Delivery limitado']
+      ])
+      +'</div>'
+      +(s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">Poblacion estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')
+    +'</div>';
   }
 
-  // ── SHARE ──
-  html+='<button onclick="shareStore(''+s.id+'')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  html+='<button onclick="exportPDF()" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📄 Descargar PDF</button>';
+  html+='<button onclick="shareStore(''+s.id+'')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">Compartir por WhatsApp</button>';
+  html+='</div>';
 
   return html;
 }
@@ -840,7 +816,7 @@ async function scanNewLocation(){
     s.grade=getGrade(s.score);
     s.gradeReal=s.grade;
 
-    dw.innerHTML=renderDetail(s);
+    dw.innerHTML=renderDetail(s);dw.scrollTop=0;
 
     var col=s.grade==='A+'||s.grade==='A'?'#15803d':s.grade==='B'?'#65a30d':s.grade==='C'?'#eab308':'#dc2626';
     window._tmpMarker.setStyle({fillColor:col});
@@ -1130,6 +1106,13 @@ function closeCompare(){document.getElementById('compareOverlay').classList.remo
 // ============================================================
 // SHARE
 // ============================================================
+
+function exportPDF(){
+  var sel=document.querySelector('#slist .si.active');
+  if(!sel&&!document.querySelector('#dw .hero')){alert('Seleccioná una tienda primero');return;}
+  window.print();
+}
+
 function shareStore(id){
   var s=DB.find(function(x){return x.id===id});if(!s)return;
   var msg='🇸🇻 *SiteLo El Salvador* — Análisis de Ubicación\n\n'+
