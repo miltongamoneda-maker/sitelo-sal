@@ -84,19 +84,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .dw{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
 .dw::-webkit-scrollbar{width:4px}.dw::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
 /* Hero card */
-.hero{display:flex;align-items:center;gap:16px;padding:18px 16px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;box-shadow:var(--sh2);position:relative;overflow:hidden;min-height:120px}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.hero{display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;box-shadow:var(--sh2);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .hero.ha::before{background:linear-gradient(90deg,#86efac,#15803d)}.hero.hb::before{background:linear-gradient(90deg,#d9f99d,#65a30d)}.hero.hc::before{background:linear-gradient(90deg,#fef08a,#eab308)}.hero.hd::before,.hero.hf::before{background:linear-gradient(90deg,#fca5a5,#dc2626)}
-.rng{width:96px;height:96px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:4px solid}
+.rng{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:3px solid}
 .rng.ra{border-color:var(--gn-a);background:rgba(21,128,61,.06)}.rng.rb{border-color:var(--gn-b);background:rgba(77,124,15,.06)}.rng.rc{border-color:var(--yl);background:rgba(202,138,4,.06)}.rng.rd{border-color:var(--rd);background:rgba(220,38,38,.06)}
-.gl{font-size:54px;font-weight:800;font-family:var(--mono);line-height:1}
+.gl{font-size:32px;font-weight:800;font-family:var(--mono)}
 .gl.ga{color:var(--gn-a)}.gl.gb{color:var(--gn-b)}.gl.gc{color:var(--yl)}.gl.gd{color:var(--rd)}
-.hi{flex:1;min-width:0;overflow-wrap:break-word;word-wrap:break-word}
-.hi h1{font-size:16px;font-weight:700;letter-spacing:-.2px;overflow-wrap:break-word;word-break:break-word}.hi .sub{font-size:10px;color:var(--tx2);font-family:var(--mono);margin-top:3px;opacity:.7;overflow-wrap:break-word}
-/* GLOBAL: nunca cortar contenido en paneles del detail panel */
-.dw>*{overflow-wrap:break-word;word-wrap:break-word}
-.dw .pnl,.dw .gc2,.dw .semaforo,.dw .radar-wrap,.dw .exec-summary{overflow:visible}
-.pnl p,.pnl div,.exec-reason{overflow-wrap:break-word;word-wrap:break-word}
+.hi h1{font-size:16px;font-weight:700;letter-spacing:-.2px}.hi .sub{font-size:10px;color:var(--tx2);font-family:var(--mono);margin-top:3px;opacity:.7}
 .bds{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
 .bd{font-size:8px;font-weight:600;padding:2px 7px;border-radius:5px}
 .bd-g{background:rgba(21,128,61,.08);color:var(--gn-a)}.bd-y{background:rgba(202,138,4,.08);color:var(--yl)}.bd-r{background:rgba(220,38,38,.08);color:var(--rd)}.bd-n{background:var(--bg3);color:var(--tx3)}.bd-p{background:rgba(124,58,237,.08);color:var(--pu)}.bd-t{background:rgba(230,59,46,.06);color:var(--red)}
@@ -221,7 +216,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <button class="tbtn" onclick="toggleCompareMode()" id="compareBtn" title="Comparar tiendas">⚖️</button>
 <button class="tbtn" onclick="showHistory()" title="Historial de evaluaciones">📋</button>
 <button class="tbtn" onclick="shareCurrentWhatsApp()" title="Compartir por WhatsApp" style="color:#25D366">📲</button>
-<button class="tbtn" onclick="exportPDF()" title="Exportar resumen a PDF (1 página)" style="color:#dc2626">📄</button>
 <button class="tbtn" onclick="showIdeas()" title="Ideas de mejora con IA">💡</button>
 <button class="tbtn" onclick="v20CacheStats()" title="Caché y estadísticas">⚡</button>
 <button class="tbtn" onclick="toggleTheme()">🌙</button>
@@ -333,9 +327,9 @@ function gco(g){g=g||'';return(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--g
 
 // Users
 var USERS=[
-  {email:'milton.gamoneda@ampmcentroamerica.com',name:'Milton Gamoneda',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'},
-  {email:'mgmoneda@gmail.com',name:'Milton Gamoneda',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'},
-  {email:'gerald.rocha@ampmcentroamerica.com',name:'Gerald Rocha',hash:'719b16cf946de1782fabe5e18ae45a06639531f7b7b8f83eeeaa50948630ca57'}
+  {email:'milton.gamoneda@ampmcentroamerica.com',name:'Milton Gamoneda',hash:'63523df1631db33b718090286fef4219b66ac9844225967b1835867304fb7b2c'},
+  {email:'mgmoneda@gmail.com',name:'Milton Gamoneda',hash:'63523df1631db33b718090286fef4219b66ac9844225967b1835867304fb7b2c'},
+  {email:'gerald.rocha@ampmcentroamerica.com',name:'Gerald Rocha',hash:'63523df1631db33b718090286fef4219b66ac9844225967b1835867304fb7b2c'}
 ];
 
 // ============================================================
@@ -774,10 +768,6 @@ function handleLinkPaste(){
   }
 }
 
-// V2.1: scanNewLocation now uses Supabase Edge Function (Nicaragua-style architecture)
-// 25 categorías Google Places + Gemini scoring + 30-day cache, todo server-side
-var EDGE_FN_URL=SUPABASE_URL+'/functions/v1/scan-location';
-
 async function scanNewLocation(){
   var name=document.getElementById('nN').value||'Nueva ubicación';
   var lat=parseFloat(document.getElementById('nLat').value);
@@ -787,66 +777,58 @@ async function scanNewLocation(){
 
   if(!lat||!lng){st.innerHTML='<span style="color:var(--rd)">⚠️ Ingresá coordenadas válidas</span>';return}
 
+  // Spinner & disable button
   btn.disabled=true;
-  st.innerHTML='<span class="sp"></span> Edge Function evaluando…';
+  st.innerHTML='<span class="sp"></span> IA investigando ubicación…';
   document.getElementById('emp').style.display='none';
 
+  // Temp purple marker while loading
   if(window._tmpMarker)map.removeLayer(window._tmpMarker);
   window._tmpMarker=L.circleMarker([lat,lng],{radius:8,fillColor:'#7c3aed',color:'#fff',weight:2,fillOpacity:.9}).addTo(map);
   window._tmpMarker.bindTooltip('<b>'+name+'</b><br>🔍 Analizando…').openTooltip();
   map.setView([lat,lng],14);
 
+  // Show loading panel
   var dw=document.getElementById('dw');
   dw.innerHTML='<div class="pnl" style="text-align:center;padding:32px 20px">'+
     '<div class="sp" style="width:24px;height:24px;border-width:3px;margin:0 auto 14px"></div>'+
-    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Edge Function evaluando…</div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">📡 Investigando ubicación…</div>'+
     '<div style="font-size:10px;color:var(--tx3)">Coordenadas: '+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600">25 categorías Google Places + Gemini · cache 30 días</div>'+
+    '<div id="aiProgress" style="font-size:9px;color:var(--tx3);margin-top:10px;min-height:14px;font-weight:600"></div>'+
   '</div>';
 
-  var scores;
-  try{
-    var ctrl=new AbortController();
-    var to=setTimeout(function(){ctrl.abort()},90000);
-    var res=await fetch(EDGE_FN_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
-      body:JSON.stringify({lat:lat,lng:lng,name:name}),
-      signal:ctrl.signal
-    });
-    clearTimeout(to);
-    if(!res.ok)throw new Error('Edge Function HTTP '+res.status);
-    scores=await res.json();
-    if(scores.error)throw new Error(scores.error);
-  }catch(e){
-    btn.disabled=false;
-    st.innerHTML='<span style="color:var(--rd)">⚠️ Error: '+(e&&e.message||e)+'</span>';
-    dw.innerHTML='<div class="pnl"><h2>⚠️ Error</h2><p style="font-size:11px;color:var(--tx2)">No se pudo completar la evaluación. Detalles en consola (F12).</p></div>';
-    console.error('Edge Function failed:',e);
-    return;
-  }
+  var prog=document.getElementById('aiProgress');
+  var setProg=function(t){if(prog)prog.textContent=t};
+
+  // Step 1: Google Places API — real POI data
+  setProg('📍 Google Places: buscando competidores y POIs…');
+  var poi=await researchLocation(lat,lng);
+
+  // Step 2 & 3: Sequential AI scoring with real data
+  var scores=await aiScoreLocation(name,lat,lng,poi);
+  clearInterval(iv);
 
   btn.disabled=false;
-  var cacheNote=scores._cache?' · ⚡ desde cache':' · '+Math.round((scores._elapsed_ms||0)/1000)+'s';
-  st.innerHTML='<span style="color:var(--gn-a);font-size:10px">✓ '+scores.grade+' '+scores.score+cacheNote+'</span>';
+  st.innerHTML='';
 
-  // Build store object from Edge Function response
+  // Build store object from AI scores
   var s={
-    id:'POI-CALC',name:name,zona:scores.zona||'—',municipio:scores.municipio||'Evaluación',
-    departamento:scores.departamento||'El Salvador',lat:lat,lng:lng,formato:'POI',
+    id:'POI-CALC',name:name,zona:scores.zona||'—',municipio:scores.municipio||'Evaluación AI',
+    departamento:'El Salvador',lat:lat,lng:lng,formato:'POI',
     road:scores.road||'—',roadType:0,
-    corrections:scores.justificacion||'Evaluación automática Edge Function',
-    modelVersion:'SAL13 V2.1 · Edge Function',delivPop:0,
+    corrections:scores.justificacion||'Evaluación automática IA',
+    modelVersion:'SAL13 V2.0 · IA',delivPop:0,
     delivScore:scores.delivScore||0,delivComp:scores.delivComp||0,
     dimTraffic:scores.TrafV,dimCommercial:scores.CapD,dimNSE:scores.Tick,
     dimNight:scores.Noct,dimResidential:scores.Pob,dimCompetition:scores.Comp,
-    dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3,
-    poi_counts:scores.poi_counts||{},poi_top:scores.poi_top||{}
+    dimTourism:scores.Tur,dimInfrastructure:scores.Acc,nseM2:null,rentM2:null,drs:3
   };
   VARS_SAL.forEach(function(v){s[v.k]=scores[v.k]||5});
 
-  s.score=scores.score;
-  s.grade=scores.grade;
+  var total=0;
+  VARS_SAL.forEach(function(v){total+=s[v.k]*v.w});
+  s.score=Math.round(total*1000)/1000;
+  s.grade=getGrade(s.score);
   s.gradeReal=s.grade;
 
   dw.innerHTML=renderDetail(s);
@@ -1016,33 +998,25 @@ async function aiScoreLocation(name,lat,lng,poi){
     }
   }
 
-  // Helper: fetch with timeout — never hang indefinitely
-  function fetchT(url,opts,ms){
-    var ctrl=new AbortController();
-    var to=setTimeout(function(){ctrl.abort()},ms||45000);
-    return fetch(url,Object.assign({},opts,{signal:ctrl.signal}))
-      .finally(function(){clearTimeout(to)});
-  }
-
   // ── STEP 1: Gemini ──────────────────────────────────────────
   var prog=document.getElementById('aiProgress');
   if(prog)prog.textContent='🔍 Gemini investigando zona…';
   var geminiResult=null;
   try{
-    var gRes=await fetchT(
+    var gRes=await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         contents:[{role:'user',parts:[{text:basePrompt}]}],
         generationConfig:{temperature:0.15,topP:0.85,maxOutputTokens:700}
       })
-    },45000);
+    });
     var gData=await gRes.json();
     var gText=gData.candidates&&gData.candidates[0]&&gData.candidates[0].content&&
               gData.candidates[0].content.parts&&gData.candidates[0].content.parts[0]?
               gData.candidates[0].content.parts[0].text:'';
     geminiResult=parseAI(gText);
-  }catch(e){console.warn('Gemini failed:',e);geminiResult=null}
+  }catch(e){geminiResult=null}
 
   // ── STEP 2: Claude reviews Gemini & produces final score ────
   if(prog)prog.textContent='🧠 Claude revisando y corrigiendo…';
@@ -1057,17 +1031,16 @@ async function aiScoreLocation(name,lat,lng,poi){
 
   var claudeResult=null;
   try{
-    var cRes=await fetchT('https://api.anthropic.com/v1/messages',{
+    var cRes=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5-20250929',max_tokens:700,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,
         messages:[{role:'user',content:claudePrompt}]})
-    },60000);
+    });
     var cData=await cRes.json();
-    if(cData.error)console.warn('Claude API error:',cData.error);
     var cText=cData.content&&cData.content[0]?cData.content[0].text:'';
     claudeResult=parseAI(cText);
-  }catch(e){console.warn('Claude failed:',e);claudeResult=null}
+  }catch(e){claudeResult=null}
 
   // ── MERGE: Claude es la fuente principal, Gemini es fallback ─
   var merged={};
@@ -1161,190 +1134,6 @@ function shareCurrentWhatsApp(){
   else{var msg='🇸🇻 *SiteLo El Salvador* — sitelo-sal.vercel.app\n\nAnálisis de ubicaciones AMPM · Modelo SAL13 V1.4';window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank')}
 }
 
-// V2.5: EXPORT TO PDF (1 página, letra grande)
-function exportPDF(){
-  var s=sel?DB.find(function(d){return d.id===sel}):null;
-  var calc=document.querySelector('#dw .hero')?{
-    name:document.querySelector('#dw .hero .hi h1')?.textContent||'Evaluación',
-    grade:document.querySelector('#dw .hero .gl')?.textContent||'?',
-    score:document.querySelector('#dw .hero .hi .sub')?.textContent||''
-  }:null;
-  if(!s&&!calc){alert('Seleccioná una tienda o evaluá una ubicación primero');return}
-  var st=s||{
-    name:calc.name,grade:calc.grade,score:parseFloat(calc.score)||0,
-    municipio:'—',departamento:'El Salvador',zona:'—',road:'—',
-    delivScore:0,delivComp:0,corrections:''
-  };
-  if(s){VARS_SAL.forEach(function(v){st[v.k]=parseFloat(s[v.k])||0});}
-
-  var grade=st.grade||getGrade(st.score);
-  var gColor=grade==='A+'||grade==='A'?'#15803d':grade==='B'?'#65a30d':grade==='C'?'#ca8a04':'#dc2626';
-  var gColorLight=grade==='A+'||grade==='A'?'#dcfce7':grade==='B'?'#ecfccb':grade==='C'?'#fef9c3':'#fee2e2';
-  var corrections=s?(s.corrections||''):(document.querySelector('#dw .pnl p')?.textContent||'');
-  var verdict=grade==='A+'||grade==='A'?'UBICACIÓN RECOMENDADA':grade==='B'?'UBICACIÓN VIABLE':grade==='C'?'UBICACIÓN MARGINAL':'NO RECOMENDADO';
-  var verdictIcon=grade==='A+'||grade==='A'?'✅':grade==='B'?'☑️':grade==='C'?'⚠️':'⛔';
-
-  var w=window.open('','_blank','width=900,height=1200');
-  if(!w){alert('El navegador bloqueó la ventana. Permití pop-ups en sitelo-sal.vercel.app');return}
-
-  // Variables agrupadas por dimensión (más visual)
-  var dims=[
-    {label:'Tráfico y flujo',vars:['TrafV','Vis','DblV'],icon:'🚗'},
-    {label:'Ubicación y acceso',vars:['UbQ','Acc'],icon:'📍'},
-    {label:'Mercado',vars:['Pob','Crec','Tick'],icon:'👥'},
-    {label:'Competencia',vars:['Comp'],icon:'🏪'},
-    {label:'Capacidad',vars:['CapD','CapN','Noct'],icon:'⏰'},
-    {label:'Turismo',vars:['Tur'],icon:'🏖️'}
-  ];
-
-  function dimAvg(varList){
-    var sum=0,n=0;
-    varList.forEach(function(k){var v=parseFloat(st[k]);if(!isNaN(v)){sum+=v;n++}});
-    return n>0?sum/n:0;
-  }
-
-  // Bar visual: ancho proporcional al valor 1-10
-  function barBlock(label,val,key,weight){
-    var color=val>=7?'#15803d':val>=5.5?'#65a30d':val>=4?'#ca8a04':'#dc2626';
-    var pct=Math.max(0,Math.min(100,val*10));
-    return '<div style="margin-bottom:6px">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'+
-        '<span style="font-size:12px;font-weight:600">'+label+(key?' <span style="color:#999;font-size:10px;font-weight:500">('+key+')</span>':'')+'</span>'+
-        '<span style="font-family:monospace;font-weight:700;font-size:14px;color:'+color+'">'+val.toFixed(1)+(weight?' <span style="color:#999;font-size:10px;font-weight:500">·'+(weight*100).toFixed(1)+'%</span>':'')+'</span>'+
-      '</div>'+
-      '<div style="height:8px;background:#f0efeb;border-radius:4px;overflow:hidden">'+
-        '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+color+',_'+color+'cc);border-radius:4px"></div>'+
-      '</div></div>';
-  }
-
-  // Build dimension cards
-  var dimCards=dims.map(function(d){
-    var avg=dimAvg(d.vars);
-    var color=avg>=7?'#15803d':avg>=5.5?'#65a30d':avg>=4?'#ca8a04':'#dc2626';
-    return '<div style="padding:10px 12px;background:#fff;border:1px solid #e5e5e5;border-radius:10px;border-left:4px solid '+color+'">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
-        '<div style="font-size:11px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:.4px">'+d.icon+' '+d.label+'</div>'+
-        '<div style="font-size:20px;font-weight:800;font-family:monospace;color:'+color+'">'+avg.toFixed(1)+'</div>'+
-      '</div>'+
-      '<div style="font-size:9px;color:#999">'+d.vars.join(' · ')+'</div>'+
-    '</div>';
-  }).join('');
-
-  // Build all variable bars
-  var allBars=VARS_SAL.map(function(v){
-    var val=parseFloat(st[v.k])||0;
-    return barBlock(v.k,val,'',v.w);
-  }).join('');
-
-  // POI cards visual
-  var poiSection='';
-  if(s&&s.poi_counts){
-    var poiOrder=['supermercados','conveniencia','gasolineras','bancos','farmacias','restaurantes','hoteles','escuelas','hospitales','bares','shopping','cafes'];
-    var poiVisible=poiOrder.filter(function(k){return s.poi_counts[k]>0}).slice(0,12);
-    poiSection='<div style="padding:12px;background:linear-gradient(135deg,#1B2A4A05,#1B2A4A02);border:1px solid #e5e5e5;border-radius:10px">'+
-      '<div style="font-size:12px;font-weight:700;color:#1B2A4A;margin-bottom:8px">📍 POIs cercanos (Google Places · radio 500-1500m)</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+
-      poiVisible.map(function(k){
-        var n=s.poi_counts[k];
-        var nColor=n>=10?'#dc2626':n>=5?'#ca8a04':n>=2?'#65a30d':'#15803d';
-        return '<div style="padding:6px 8px;background:#fff;border:1px solid #e5e5e5;border-radius:6px;text-align:center">'+
-          '<div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.3px">'+k+'</div>'+
-          '<div style="font-size:18px;font-weight:800;font-family:monospace;color:'+nColor+';margin-top:2px">'+n+'</div>'+
-        '</div>';
-      }).join('')+
-      '</div></div>';
-  }
-
-  // Delivery special box (45% de ventas SV)
-  var deliverySection='';
-  if(st.delivScore){
-    var dColor=st.delivScore>=7?'#15803d':st.delivScore>=5.5?'#65a30d':st.delivScore>=4?'#ca8a04':'#dc2626';
-    deliverySection='<div style="margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#7c3aed10,#7c3aed04);border:1px solid #7c3aed40;border-radius:10px;display:flex;align-items:center;justify-content:space-between">'+
-      '<div><div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.4px">🛵 Delivery (45% ventas SV)</div>'+
-      '<div style="font-size:11px;color:#666;margin-top:2px">PedidosYa · Uber Eats · radio 5km</div></div>'+
-      '<div style="text-align:right">'+
-      '<div style="font-size:24px;font-weight:800;font-family:monospace;color:'+dColor+'">'+st.delivScore.toFixed(1)+'<span style="font-size:14px;color:#999">/10</span></div>'+
-      (st.delivComp?'<div style="font-size:10px;color:#666">Comp: '+st.delivComp.toFixed(1)+'</div>':'')+
-      '</div></div>';
-  }
-
-  w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>SiteLo SV — '+st.name+'</title>'+
-    '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">'+
-    '<style>'+
-    '@page{size:A4;margin:10mm}'+
-    '@media print{body{margin:0}.noprint{display:none}}'+
-    '*{margin:0;padding:0;box-sizing:border-box;font-family:"Plus Jakarta Sans",system-ui,sans-serif}'+
-    'body{padding:14px 18px;color:#1B2A4A;line-height:1.35;background:#fff;font-size:11px}'+
-    '.printBtn{position:fixed;top:20px;right:20px;padding:14px 28px;background:#E63B2E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:999}'+
-    '.printBtn:hover{filter:brightness(1.1)}'+
-    '</style></head><body>'+
-    '<button class="printBtn noprint" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>'+
-    // ── Header con branding fuerte ──
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:4px solid #E63B2E;margin-bottom:12px">'+
-      '<div>'+
-        '<div style="font-size:11px;color:#E63B2E;font-weight:800;letter-spacing:1px;text-transform:uppercase">am:pm · SiteLo El Salvador</div>'+
-        '<div style="font-size:22px;font-weight:800;color:#1B2A4A;margin-top:2px">'+st.name+'</div>'+
-        '<div style="font-size:12px;color:#666;margin-top:2px">'+(st.municipio||'')+(st.departamento?', '+st.departamento:'')+(st.road&&st.road!=='—'?' · '+st.road:'')+(st.zona&&st.zona!=='—'?' · '+st.zona:'')+'</div>'+
-      '</div>'+
-      '<div style="text-align:right">'+
-        '<div style="font-size:9px;color:#999;font-weight:600;letter-spacing:.5px;text-transform:uppercase">Modelo</div>'+
-        '<div style="font-size:13px;font-weight:700;color:#7c3aed;font-family:monospace">SAL13 V2.5</div>'+
-        '<div style="font-size:9px;color:#999;margin-top:2px">'+new Date().toLocaleDateString('es-SV',{day:'2-digit',month:'short',year:'numeric'})+'</div>'+
-      '</div>'+
-    '</div>'+
-
-    // ── Hero gigante: nota + verdict ──
-    '<div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:stretch;padding:18px 20px;background:'+gColorLight+';border:3px solid '+gColor+';border-radius:16px;margin-bottom:14px">'+
-      '<div style="display:flex;align-items:center;justify-content:center;width:130px;height:130px;background:#fff;border:5px solid '+gColor+';border-radius:24px">'+
-        '<div style="font-size:90px;font-weight:900;font-family:monospace;color:'+gColor+';line-height:1;letter-spacing:-3px">'+grade+'</div>'+
-      '</div>'+
-      '<div style="display:flex;flex-direction:column;justify-content:center">'+
-        '<div style="font-size:12px;color:'+gColor+';font-weight:700;letter-spacing:1.5px;text-transform:uppercase">'+verdictIcon+' Veredicto</div>'+
-        '<div style="font-size:26px;font-weight:800;color:#1B2A4A;line-height:1.15;margin-top:2px">'+verdict+'</div>'+
-        '<div style="display:flex;gap:14px;margin-top:8px;align-items:baseline">'+
-          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">Score</span><div style="font-size:32px;font-weight:900;font-family:monospace;color:'+gColor+';line-height:1">'+(st.score||0).toFixed(2)+'<span style="font-size:14px;color:#999">/10</span></div></div>'+
-          '<div style="height:36px;width:1px;background:'+gColor+'40"></div>'+
-          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">Grado</span><div style="font-size:18px;font-weight:700;color:'+gColor+';line-height:1.3">'+grade+'</div></div>'+
-          (st.drs?'<div style="height:36px;width:1px;background:'+gColor+'40"></div>'+
-          '<div><span style="font-size:10px;color:#666;text-transform:uppercase;font-weight:600">DRS</span><div style="font-size:18px;font-weight:700;color:#1B2A4A;line-height:1.3">'+st.drs+'/5</div></div>':'')+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-
-    // ── Resumen por dimensión (6 cards) ──
-    '<div style="margin-bottom:14px">'+
-      '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">📊 Resumen por categoría</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'+dimCards+'</div>'+
-    '</div>'+
-
-    // ── Justificación IA ──
-    (corrections?'<div style="margin-bottom:14px;padding:14px 16px;background:#fffbeb;border-left:5px solid #f59e0b;border-radius:8px">'+
-      '<div style="font-size:11px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📝 Análisis IA — Correcciones aplicadas</div>'+
-      '<div style="font-size:12px;color:#1B2A4A;line-height:1.55">'+corrections+'</div>'+
-    '</div>':'')+
-
-    // ── Bars de las 13 variables ──
-    '<div style="margin-bottom:12px">'+
-      '<div style="font-size:11px;color:#666;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">📈 Detalle de las 13 variables (modelo SAL13)</div>'+
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;padding:12px;background:#f5f5f0;border-radius:10px">'+allBars+'</div>'+
-    '</div>'+
-
-    // ── Delivery (SV específico) ──
-    deliverySection+
-
-    // ── POIs cercanos ──
-    poiSection+
-
-    // ── Footer ──
-    '<div style="margin-top:14px;padding-top:8px;border-top:2px solid #E63B2E;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#999">'+
-      '<div>Generado por <b style="color:#E63B2E">am:pm SiteLo</b> · Edge Function + Google Places + Gemini 2.5</div>'+
-      '<div>sitelo-sal.vercel.app · AMPM Centroamérica</div>'+
-    '</div>'+
-    '</body></html>');
-  w.document.close();
-  setTimeout(function(){w.focus();w.print()},400);
-}
-
 // ============================================================
 // AI CHAT
 // ============================================================
@@ -1399,41 +1188,35 @@ async function sendChat(){
 
   var systemCtx='Eres el asistente AI de SiteLo El Salvador, sistema de scoring de ubicaciones AMPM (modelo SAL13 V1.4, 13 variables). '+getAllStoresContext()+' '+getStoreContext()+' Responde en español, conciso (máx 150 palabras). Usa datos reales de la red al comparar tiendas.';
 
-  // V2.5: Chat usa solo Gemini 2.5 Pro (mejor razonamiento que Flash, sin Claude)
-  var reply='';
-  try{
-    var ctrl=new AbortController();
-    var to=setTimeout(function(){ctrl.abort()},45000);
-    var r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key='+AK,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      signal:ctrl.signal,
-      body:JSON.stringify({
-        contents:chatHistory.map(function(m){return{role:m.role==='user'?'user':'model',parts:[{text:m.content}]}}),
-        systemInstruction:{parts:[{text:systemCtx}]},
-        generationConfig:{temperature:0.4,maxOutputTokens:8000}
-      })
-    });
-    clearTimeout(to);
-    var d=await r.json();
-    if(d.error){console.warn('Gemini chat error:',d.error);reply='Error: '+(d.error.message||'API call failed');}
-    else{
-      try{reply=d.candidates[0].content.parts.map(function(p){return p.text||''}).join('')}
-      catch(e){reply='No se pudo procesar la respuesta.';console.warn('parse error:',d);}
-    }
-  }catch(e){
-    reply='Error de conexión: '+(e&&e.message||e);
-    console.warn('chat fetch failed:',e);
-  }
+  var geminiReply='',claudeReply='';
+  var geminiP=fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+AK,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:chatHistory.map(function(m){return{role:m.role==='user'?'user':'model',parts:[{text:m.content}]}}),systemInstruction:{parts:[{text:systemCtx}]}})
+  }).then(function(r){return r.json()}).then(function(d){
+    try{geminiReply=d.candidates[0].content.parts.map(function(p){return p.text||''}).join('')}catch(e){geminiReply=''}
+  }).catch(function(){geminiReply=''});
 
+  var claudeMessages=[{role:'user',content:systemCtx+'\n\nHistorial:\n'+chatHistory.slice(-6).map(function(m){return(m.role==='user'?'Usuario':'AI')+': '+m.content}).join('\n')+'\n\nResponde al último mensaje del usuario en español.'}];
+  var claudeP=fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:claudeMessages})
+  }).then(function(r){return r.json()}).then(function(d){
+    try{claudeReply=d.content[0].text}catch(e){claudeReply=''}
+  }).catch(function(){claudeReply=''});
+
+  await Promise.all([geminiP,claudeP]);
   var th=document.getElementById('chatThinking');if(th)th.remove();
 
-  var finalReply=reply?
-    '<div style="margin-bottom:4px"><span style="background:#1a73e8;color:#fff;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700">Gemini Pro</span></div>'+reply.replace(/\n/g,'<br>'):
-    'Error: no se pudo conectar con la AI. Verificá tu conexión.';
+  var finalReply='';
+  if(claudeReply&&geminiReply){
+    finalReply='<div style="margin-bottom:4px"><span style="background:var(--pu);color:#fff;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700">Claude</span></div>'+claudeReply.replace(/\n/g,'<br>')+'<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--brd)"><span style="background:#ea580c;color:#fff;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700">Gemini</span></div>'+geminiReply.replace(/\n/g,'<br>');
+  }else if(claudeReply){finalReply=claudeReply.replace(/\n/g,'<br>');}
+  else if(geminiReply){finalReply=geminiReply.replace(/\n/g,'<br>');}
+  else{finalReply='Error: no se pudo conectar con la AI. Verificá tu conexión.';}
 
   appendChatMsg('ai',finalReply);
-  chatHistory.push({role:'assistant',content:reply||'Error'});
+  chatHistory.push({role:'assistant',content:(claudeReply||geminiReply||'Error')});
 }
 
 function injectChatUI(){
@@ -1450,7 +1233,7 @@ function injectChatUI(){
   var panel=document.createElement('div');
   panel.id='chatPanel';
   panel.style.cssText='display:none;position:fixed;bottom:80px;right:20px;width:370px;max-height:480px;background:var(--bg);border:1px solid var(--brd);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.25);z-index:9999;flex-direction:column;overflow:hidden';
-  panel.innerHTML='<div style="padding:10px 14px;background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:13px">🤖 SiteLo AI <span style="font-size:9px;opacity:.8">Gemini 2.5 Pro · El Salvador</span></div><button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button></div><div id="chatMsgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:4px;min-height:250px;max-height:360px"></div><div style="padding:8px;border-top:1px solid var(--brd);display:flex;gap:6px"><input id="chatInput" type="text" placeholder="Pregunta sobre tiendas, scores, ubicaciones..." style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx);font-family:var(--font);font-size:11px;outline:none" onkeydown="if(event.key===\'Enter\')sendChat()"><button onclick="sendChat()" style="padding:8px 12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-weight:700;font-size:11px;cursor:pointer">Enviar</button></div>';
+  panel.innerHTML='<div style="padding:10px 14px;background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:13px">🤖 SiteLo AI <span style="font-size:9px;opacity:.8">Claude + Gemini · El Salvador</span></div><button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button></div><div id="chatMsgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:4px;min-height:250px;max-height:360px"></div><div style="padding:8px;border-top:1px solid var(--brd);display:flex;gap:6px"><input id="chatInput" type="text" placeholder="Pregunta sobre tiendas, scores, ubicaciones..." style="flex:1;padding:8px 10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx);font-family:var(--font);font-size:11px;outline:none" onkeydown="if(event.key===\'Enter\')sendChat()"><button onclick="sendChat()" style="padding:8px 12px;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:var(--font);font-weight:700;font-size:11px;cursor:pointer">Enviar</button></div>';
   document.body.appendChild(panel);
 }
 
@@ -1518,6 +1301,11 @@ function clearHistory(){
 // ============================================================
 // V2.0: DESERT FINDER — Spots curados El Salvador (patrón Panama)
 // ============================================================
+function setDesertCoords(lat,lng,name){
+  document.getElementById('nLat').value=lat;
+  document.getElementById('nLng').value=lng;
+  document.getElementById('nN').value=name;
+}
 function findDeserts(){
   var tiendas=DB.filter(function(s){return s.lat&&s.lng&&!s.id.startsWith('POI')});
   var spots=[
@@ -1593,7 +1381,7 @@ function findDeserts(){
         '<div style="font-family:var(--mono);font-weight:800;font-size:14px;color:'+tagCol+';margin-top:2px">'+d.dist+'<span style="font-size:9px;font-weight:500">km</span></div>'+
       '</div>'+
       '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">'+
-        '<button onclick="document.getElementById(\'nLat\').value='+d.lat.toFixed(5)+';document.getElementById(\'nLng\').value='+d.lng.toFixed(5)+';document.getElementById(\'nN\').value='+JSON.stringify(d.n).replace(/"/g,'&quot;')+';closeCompare()" '+
+        '<button onclick="setDesertCoords('+d.lat.toFixed(5)+','+d.lng.toFixed(5)+',\''+d.n.replace(/\'/g,'')+'\');closeCompare()" '+
           'style="font-size:9px;padding:5px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer;font-family:var(--font);font-weight:700">🔍 Evaluar</button>'+
         '<button onclick="map.flyTo(['+d.lat+','+d.lng+'],13);closeCompare()" '+
           'style="font-size:9px;padding:4px 10px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx2);cursor:pointer;font-family:var(--font);font-weight:600">📍 Mapa</button>'+
