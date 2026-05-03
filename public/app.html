@@ -567,54 +567,83 @@ function renderDetail(s){
   var g=s.grade,gc_=gc(g);
   var html='';
 
-  // Exec summary
-  var verdict='',color='';
-  if(g==='A+'||g==='A'){verdict='✅ Ubicación recomendada para apertura';color='ha'}
-  else if(g==='B'){verdict='⚠️ Ubicación viable con reservas';color='hb'}
-  else if(g==='C'){verdict='⛔ Ubicación marginal — revisar antes de abrir';color='hc'}
-  else{verdict='🚫 No recomendada';color='hd'}
-  html+='<div class="exec-summary '+color+'"><div class="exec-verdict">'+verdict+'</div>';
-  if(s.corrections){html+='<div class="exec-reason"><strong>Correcciones aplicadas:</strong> '+s.corrections+'</div>'}
+  var gradeColor=(g==='A+'||g==='A')?'var(--gn-a)':g==='B'?'var(--gn-b)':g==='C'?'var(--yl)':'var(--rd)';
+  var gradeBg=(g==='A+'||g==='A')?'rgba(21,128,61,.08)':g==='B'?'rgba(77,124,15,.08)':g==='C'?'rgba(202,138,4,.08)':'rgba(220,38,38,.08)';
+  var gradeBrd=(g==='A+'||g==='A')?'rgba(21,128,61,.25)':g==='B'?'rgba(77,124,15,.25)':g==='C'?'rgba(202,138,4,.25)':'rgba(220,38,38,.25)';
+  var verdict='',vColor='';
+  if(g==='A+'||g==='A'){verdict='Ubicación recomendada para apertura';vColor='var(--gn-a)'}
+  else if(g==='B'){verdict='Viable con reservas';vColor='var(--gn-b)'}
+  else if(g==='C'){verdict='Marginal — revisar antes de abrir';vColor='var(--yl)'}
+  else{verdict='No recomendada';vColor='var(--rd)'}
+
+  var dScore=parseFloat(s.delivScore||0);
+  var comp=parseFloat(s.Comp||0);
+  var tur=parseFloat(s.Tur||0);
+  var traf=parseFloat(s.TrafV||0);
+  var capN=parseFloat(s.CapN||0);
+  function bdc(v){return v>=7?'bd-g':v>=4?'bd-y':'bd-r'}
+
+  // ── HERO CARD ──
+  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:12px;overflow:hidden;box-shadow:var(--sh2)">';
+  html+='<div style="height:4px;background:'+gradeColor+'"></div>';
+  html+='<div style="padding:16px;display:flex;gap:14px;align-items:flex-start">';
+  // Grade box
+  html+='<div style="width:80px;height:80px;border-radius:14px;border:2.5px solid '+gradeBrd+';background:'+gradeBg+';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">';
+  html+='<div style="font-size:40px;font-weight:800;font-family:var(--mono);color:'+gradeColor+';line-height:1">'+g+'</div>';
+  html+='<div style="font-size:10px;font-weight:700;color:'+gradeColor+';opacity:.7;margin-top:2px">'+s.score+'</div>';
+  html+='</div>';
+  // Info
+  html+='<div style="flex:1;min-width:0">';
+  html+='<div style="font-size:17px;font-weight:700;color:var(--tx);line-height:1.2">'+s.name+'</div>';
+  html+='<div style="font-size:10px;color:var(--tx3);margin-top:2px;font-family:var(--mono)">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>';
+  html+='<div style="font-size:11px;font-weight:600;color:'+vColor+';margin-top:5px">'+verdict+'</div>';
+  html+='<div class="bds" style="margin-top:8px">';
+  html+='<span class="bd '+bdc(traf)+'">Tráfico '+traf.toFixed(1)+'</span>';
+  html+='<span class="bd '+bdc(capN)+'">Nocturno '+capN.toFixed(1)+'</span>';
+  html+='<span class="bd '+(comp<=3?'bd-g':comp<=6?'bd-y':'bd-r')+'">Comp. '+comp.toFixed(1)+'</span>';
+  if(dScore>0)html+='<span class="bd '+bdc(dScore)+'">🛵 '+dScore.toFixed(1)+'</span>';
+  if(tur>=4)html+='<span class="bd '+bdc(tur)+'">Tur. '+tur.toFixed(1)+'</span>';
+  html+='<span class="bd bd-p">'+s.modelVersion+'</span>';
+  html+='</div></div></div>';
+  // Justification
+  if(s.corrections){
+    html+='<div style="padding:10px 16px 14px;font-size:10px;color:var(--tx3);line-height:1.6;border-top:1px solid rgba(128,128,128,.08)">'+s.corrections+'</div>';
+  }
   html+='</div>';
 
-  // Hero card
-  html+='<div class="hero h'+gc_+'">'+
-    '<div class="rng r'+gc_+'"><div class="gl g'+gc_+'">'+g+'</div></div>'+
-    '<div class="hi">'+
-      '<h1>'+s.name+'</h1>'+
-      '<div class="sub">'+s.id+' · '+s.municipio+', '+s.departamento+'</div>'+
-      '<div class="bds">'+
-        '<span class="bd bd-n">Score: '+s.score+'</span>'+
-        '<span class="bd bd-n">DRS: '+s.drs+'/5</span>'+
-
-        '<span class="bd bd-p">'+s.modelVersion+'</span>'+
-        (s.formato?'<span class="bd bd-n">'+s.formato+'</span>':'')+
-      '</div>'+
-    '</div></div>';
-
-
-
-  // Semáforo por categorías
+  // ── CATEGORY BARS ──
   var cats=[
-    {name:'Tráfico y Flujo',vars:['TrafV','CapN','CapD']},
-    {name:'Ubicación',vars:['Vis','Acc','DblV','UbQ']},
-    {name:'Mercado',vars:['Pob','Noct','Crec','Tick']},
-    {name:'Competencia',vars:['Comp']},
-    {name:'Turismo',vars:['Tur']},
-    {name:'🛵 Delivery SV',vars:s.delivScore>0?['delivScore']:['Noct','Pob']}
+    {name:'Tráfico y Flujo',ico:'🚦',vars:['TrafV','CapN','CapD']},
+    {name:'Ubicación',ico:'📍',vars:['Vis','Acc','DblV','UbQ']},
+    {name:'Mercado',ico:'🏪',vars:['Pob','Noct','Crec','Tick']},
+    {name:'Competencia',ico:'⚔️',vars:['Comp'],invert:true},
+    {name:'Turismo',ico:'🏖️',vars:['Tur']},
+    {name:'Delivery SV',ico:'🛵',fixed:dScore>0?dScore:null}
   ];
-  html+='<div class="semaforo"><div class="semaforo-title">📊 Resumen por Categoría</div>';
+  html+='<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:14px;box-shadow:var(--sh)">';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">📊 Resumen por Categoría</div>';
   cats.forEach(function(cat){
-    var avg=0;cat.vars.forEach(function(v){avg+=(s[v]||0)});avg=avg/cat.vars.length;
-    var color=avg>=7?'#15803d':avg>=4?'#ca8a04':'#dc2626';
-    html+='<div class="semaforo-item"><span class="semaforo-dot" style="background:'+color+'"></span><span class="semaforo-label">'+cat.name+'</span><span class="semaforo-value" style="color:'+color+'">'+avg.toFixed(1)+' '+(avg>=7?'🟢':avg>=4?'🟡':'🔴')+'</span></div>';
+    var avg;
+    if(cat.fixed!=null){avg=cat.fixed}
+    else if(cat.vars&&cat.vars.length){avg=0;cat.vars.forEach(function(v){avg+=parseFloat(s[v]||0)});avg=avg/cat.vars.length}
+    else return;
+    var pct=Math.round(avg/10*100);
+    var bc=cat.invert?(avg<=3?'var(--rd)':avg<=6?'var(--yl)':'var(--gn-a)'):(avg>=7?'var(--gn-a)':avg>=5?'var(--yl)':'var(--rd)');
+    html+='<div style="margin-bottom:9px">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">';
+    html+='<span style="font-size:11px;color:var(--tx2)">'+cat.ico+' '+cat.name+'</span>';
+    html+='<span style="font-size:12px;font-weight:700;color:'+bc+';font-family:var(--mono)">'+avg.toFixed(1)+'</span>';
+    html+='</div>';
+    html+='<div style="height:7px;background:var(--bg3);border-radius:4px;overflow:hidden">';
+    html+='<div style="width:'+pct+'%;height:100%;background:'+bc+';border-radius:4px"></div>';
+    html+='</div></div>';
   });
   html+='</div>';
 
-  // Radar
+  // ── RADAR ──
   html+='<div class="radar-wrap"><h2>🕸 Perfil de Variables SAL13</h2>'+drawRadar(s)+'</div>';
 
-  // Variable table
+  // ── VARIABLE TABLE ──
   html+='<div class="pnl"><h2>📐 Variables del Modelo SAL13</h2><table class="vt"><thead><tr><th>Variable</th><th>Peso</th><th>Valor</th><th>Contribución</th><th>Rango</th></tr></thead><tbody>';
   VARS_SAL.forEach(function(v){
     var val=parseFloat(s[v.k]||0);
@@ -628,54 +657,41 @@ function renderDetail(s){
   });
   html+='</tbody></table></div>';
 
-  // Location details
+  // ── LOCATION + DIMS ──
   html+='<div class="g2">'+
     detailCard('📍 Ubicación',[
-      ['Dirección',s.direccion||'—'],
-      ['Zona',s.zona||'—'],
-      ['Municipio',s.municipio],
-      ['Departamento',s.departamento],
-      ['Road Type',s.roadType?'Tipo '+s.roadType:'—'],
-      ['Carretera',s.road||'—']
+      ['Zona',s.zona||'—'],['Municipio',s.municipio],['Departamento',s.departamento],
+      ['Carretera',s.road||'—'],['Road Type',s.roadType?'Tipo '+s.roadType:'—']
     ])+
-    detailCard('📦 Dimensiones Raw',[
-      ['Tráfico (dim)',s.dimTraffic||'—'],
-      ['Comercial (dim)',s.dimCommercial||'—'],
-      ['NSE (dim)',s.dimNSE||'—'],
-      ['Nocturno (dim)',s.dimNight||'—'],
-      ['Residencial (dim)',s.dimResidential||'—'],
-      ['Competencia (dim)',s.dimCompetition||'—'],
-      ['Turismo (dim)',s.dimTourism||'—']
+    detailCard('📦 Dimensiones',[
+      ['Tráfico',s.dimTraffic||'—'],['Comercial',s.dimCommercial||'—'],['NSE',s.dimNSE||'—'],
+      ['Nocturno',s.dimNight||'—'],['Competencia',s.dimCompetition||'—'],['Turismo',s.dimTourism||'—']
     ])+
   '</div>';
 
-  // Delivery (El Salvador: 45% de ventas = delivery PedidosYa/Uber Eats)
-  var dScore=parseFloat(s.delivScore||0);
+  // ── DELIVERY ──
+  var dScoreF=parseFloat(s.delivScore||0);
   var dComp=parseFloat(s.delivComp||0);
-  if(dScore>0||s.delivPop){
-    var dColor=dScore>=7?'var(--gn-a)':dScore>=4?'var(--yl)':'var(--rd)';
-    var dLabel=dScore>=7?'🟢 Alto':dScore>=4?'🟡 Medio':'🔴 Bajo';
+  if(dScoreF>0||s.delivPop){
+    var dColor=dScoreF>=7?'var(--gn-a)':dScoreF>=4?'var(--yl)':'var(--rd)';
+    var dLabel=dScoreF>=7?'🟢 Alto':dScoreF>=4?'🟡 Medio':'🔴 Bajo';
     var dSat=dComp>=7?'🔴 Alta':dComp>=5?'🟡 Media':'🟢 Baja';
     html+='<div class="pnl"><h2>🛵 Delivery — PedidosYa / Uber Eats (45% ventas SV)</h2>'+
       '<div class="g2">'+
       detailCard('Potencial Delivery',[
-        ['Score delivery',dScore.toFixed(1)+'/10'],
-        ['Nivel',dLabel],
-        ['Cobertura apps','5km radio (SV estándar)'],
-        ['Impacto ventas','~45% facturación']
+        ['Score',dScoreF.toFixed(1)+'/10'],['Nivel',dLabel],
+        ['Radio apps','5km (SV estándar)'],['Impacto','~45% facturación']
       ])+
       detailCard('Competencia Delivery',[
-        ['Saturación apps',dSat],
-        ['Score competencia',dComp.toFixed(1)+'/10'],
-        ['Restaurantes (500m)',(s.dimNight||0)+' detectados'],
-        ['Recomendación',dScore>=7&&dComp<=5?'✅ Abrir delivery activo':dScore>=4?'⚠️ Delivery moderado':'❌ Delivery limitado']
+        ['Saturación',dSat],['Score comp.',dComp.toFixed(1)+'/10'],
+        ['Recomendación',dScoreF>=7&&dComp<=5?'✅ Delivery activo':dScoreF>=4?'⚠️ Delivery moderado':'❌ Limitado']
       ])+
       '</div>'+
-      (s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">📍 Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
-    '</div></div>';
+      (s.delivPop?'<div style="font-size:10px;color:var(--tx3);margin-top:6px">Población estimada 5km: ~'+Number(s.delivPop).toLocaleString()+' hab.</div>':'')+
+    '</div>';
   }
 
-  // Share button
+  // ── SHARE ──
   html+='<button onclick="shareStore(\''+s.id+'\')" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:8px;background:var(--bg2);color:var(--tx2);font-family:var(--font);font-size:11px;cursor:pointer;font-weight:600">📲 Compartir por WhatsApp</button>';
 
   return html;
