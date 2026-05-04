@@ -838,7 +838,7 @@ async function scanNewLocation(){
 async function researchLocation(lat,lng){
   var result={
     supermarkets:[],convenienceStores:[],gasStations:[],
-    restaurants:[],bars:[],banks:[],schools:[],hotels:[],
+    restaurants:[],bars:[],malls:[],banks:[],schools:[],hotels:[],
     pharmacies:[],raw:{}
   };
 
@@ -867,7 +867,9 @@ async function researchLocation(lat,lng){
     searchNearby(['supermarket','grocery_store'],1000),           // 0 competencia formal
     searchNearby(['convenience_store'],800),                       // 1 tiendas conveniencia
     searchNearby(['gas_station'],600),                             // 2 gasolineras
-    searchNearby(['restaurant','bar','night_club','cafe'],500),    // 3 nocturnos
+    searchNearby(['bar','night_club'],500),                         // 3 bares/nocturnos reales
+    searchNearby(['restaurant','cafe'],500),                        // 3b restaurantes/cafes (pueden ser de mall)
+    searchNearby(['shopping_mall','department_store'],300),         // 3c centros comerciales (desactivan Noct de restaurantes)
     searchNearby(['bank','atm'],1000),                             // 4 bancos
     searchNearby(['school','university'],1000),                    // 5 colegios
     searchNearby(['lodging'],1000),                                // 6 hoteles
@@ -877,11 +879,13 @@ async function researchLocation(lat,lng){
   result.supermarkets=searches[0];
   result.convenienceStores=searches[1];
   result.gasStations=searches[2];
-  result.restaurants=searches[3];
-  result.banks=searches[4];
-  result.schools=searches[5];
-  result.hotels=searches[6];
-  result.pharmacies=searches[7];
+  result.bars=searches[3];
+  result.restaurants=searches[4];
+  result.malls=searches[5];
+  result.banks=searches[6];
+  result.schools=searches[7];
+  result.hotels=searches[8];
+  result.pharmacies=searches[9];
   return result;
 }
 
@@ -892,7 +896,10 @@ function poiSummary(poi){
   if(poi.convenienceStores.length)lines.push('Tiendas conveniencia (800m): '+poi.convenienceStores.length+' — '+poi.convenienceStores.slice(0,4).map(function(p){return p.name}).join(', '));
   else lines.push('Tiendas conveniencia (800m): 0 encontradas');
   lines.push('Gasolineras (600m): '+poi.gasStations.length+(poi.gasStations.length?(' — '+poi.gasStations.map(function(p){return p.name}).join(', ')):''));
-  lines.push('Restaurantes/bares (500m): '+poi.restaurants.length);
+  var mallAlert=poi.malls&&poi.malls.length?'⚠️ MALL DETECTADO ('+poi.malls.map(function(p){return p.name}).join(', ')+') — restaurantes NO son generadores nocturnos':'';
+  if(poi.bars&&poi.bars.length)lines.push('Bares/night clubs REALES (500m): '+poi.bars.length+' — '+poi.bars.slice(0,4).map(function(p){return p.name}).join(', '));
+  else lines.push('Bares/night clubs REALES (500m): 0 encontrados');
+  lines.push('Restaurantes/cafes (500m): '+poi.restaurants.length+(mallAlert?' '+mallAlert:''));
   lines.push('Bancos/ATM (1km): '+poi.banks.length+(poi.banks.length?(' — '+poi.banks.slice(0,3).map(function(p){return p.name}).join(', ')):''));
   lines.push('Escuelas/universidades (1km): '+poi.schools.length);
   lines.push('Hoteles (1km): '+poi.hotels.length);
@@ -931,7 +938,7 @@ async function aiScoreLocation(name,lat,lng,poi){
     '2. NUNCA uses 5 como valor default. Cada variable debe justificarse con datos reales o geografía.\n'+
     '3. Comp: 0 formales → Comp 7-8 (poca competencia). 3+ formales → Comp 2-4. Incluye Super Selectos, Walmart, tiendas gas.\n'+
     '4. CapD: basate en bancos+escuelas+farmacias. 0 de todos → CapD 2-3. Banco presente → CapD mínimo 5.\n'+
-    '5. Noct/CapN: <3 restaurantes → Noct 2-3. Gasolinera presente → CapN sube 1. Hospital → CapN mínimo 6.\n'+
+    '5. Noct/CapN: USA SOLO los datos de Bares/night clubs REALES para Noct. Bares reales ≥1 → Noct 5+. Bares reales =0 → Noct máximo 3 (restaurantes de mall no cuentan). Si ves "⚠️ MALL DETECTADO" → los restaurantes/cafes NO son generadores nocturnos; Noct máximo 2 salvo bares reales presentes. Gasolinera presente → CapN sube 1. Hospital → CapN mínimo 6.\n'+
     '6. Pob: 0 bancos en 1km = zona escasa (Pob 2-4). 3+ bancos = zona densa (Pob 7+).\n'+
     '7. TrafV: CA-1/CA-4/CA-2/Bypass/Anillo Periférico → 7-9. Boulevard → 5-7. Secundaria → 3-5. Rural → 1-3.\n'+
     '8. Tick: Farmacia cadena presente → Tick mínimo 4. Banco presente → Tick mínimo 5. Sin ninguno → Tick 2-3.\n'+
