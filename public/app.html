@@ -225,6 +225,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <button class="mobile-menu" onclick="document.querySelector('.side').classList.toggle('mobile-open')">☰</button>
 <div class="rt">
 <span id="storeCount">3 tiendas</span>
+<button class="tbtn" onclick="toggleHeatmap()" id="heatmapBtn" title="Mapa de calor — evaluaciones previas">🌡️</button>
 <button class="tbtn" onclick="findDeserts()" title="Buscar zonas sin AMPM (Desiertos)">🏜️</button>
 <button class="tbtn" onclick="toggleCompareMode()" id="compareBtn" title="Comparar tiendas">⚖️</button>
 <button class="tbtn" onclick="showHistory()" title="Historial de evaluaciones">📋</button>
@@ -288,7 +289,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 <button onclick="closeHistory()" style="position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--tx2)">✕ Cerrar</button>
 <h2>📋 Historial de Evaluaciones</h2>
 <div id="historyContent"><div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún. Evaluá una ubicación para comenzar.</div></div>
-<button onclick="clearHistory()" style="margin-top:12px;padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx3);font-size:11px;cursor:pointer;font-family:var(--font)">🗑️ Borrar historial</button>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button onclick="exportHistoryCSV()" style="flex:1;padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx2);font-size:11px;cursor:pointer;font-family:var(--font);font-weight:600">📥 Exportar CSV</button>
+<button onclick="clearHistory()" style="padding:6px 12px;border:1px solid var(--brd);border-radius:6px;background:var(--bg3);color:var(--tx3);font-size:11px;cursor:pointer;font-family:var(--font)">🗑️ Borrar</button>
+</div>
 </div>
 </div>
 <!-- Ideas Modal -->
@@ -534,6 +538,45 @@ function render(){
 // ============================================================
 // MAP
 // ============================================================
+var _heatMarkers=[];var _heatVisible=false;
+
+async function loadHeatmap(){
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/public_scouting_map',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},
+      body:'{}'
+    });
+    var pts=await r.json();
+    if(!Array.isArray(pts))return;
+    var gradeCol={'A+':'#15803d','A':'#15803d','B':'#65a30d','C':'#eab308','D':'#f97316','F':'#dc2626'};
+    pts.forEach(function(p){
+      if(!p.lat||!p.lng)return;
+      var col=gradeCol[p.grade]||'#888';
+      var m=L.circleMarker([p.lat,p.lng],{
+        radius:10,fillColor:col,color:col,weight:1,
+        fillOpacity:0.35,opacity:0.5
+      }).addTo(map);
+      m.bindTooltip('<b>'+( p.poi_name||'Ubicación')+'</b><br>'+(p.grade||'?')+' · '+(p.score||'—'),{direction:'top',offset:[0,-8]});
+      _heatMarkers.push(m);
+    });
+    _heatVisible=true;
+    document.getElementById('heatmapBtn').style.background='var(--red)';
+    document.getElementById('heatmapBtn').style.color='#fff';
+  }catch(e){}
+}
+
+function toggleHeatmap(){
+  if(_heatMarkers.length===0){loadHeatmap();return;}
+  _heatVisible=!_heatVisible;
+  _heatMarkers.forEach(function(m){
+    if(_heatVisible)map.addLayer(m);else map.removeLayer(m);
+  });
+  var btn=document.getElementById('heatmapBtn');
+  btn.style.background=_heatVisible?'var(--red)':'';
+  btn.style.color=_heatVisible?'#fff':'';
+}
+
 function initMap(){
   try{
     map=L.map('map',{zoomControl:false}).setView([13.68,-89.24],11);
@@ -839,6 +882,7 @@ async function researchLocation(lat,lng){
   var result={
     supermarkets:[],convenienceStores:[],gasStations:[],
     restaurants:[],bars:[],malls:[],banks:[],schools:[],hotels:[],
+    dbCompetitors:[],
     pharmacies:[],raw:{}
   };
 
@@ -879,6 +923,16 @@ async function researchLocation(lat,lng){
   result.supermarkets=searches[0];
   result.convenienceStores=searches[1];
   result.gasStations=searches[2];
+  // DB competitor lookup (Supabase table — verified real locations)
+  try{
+    var dbCompR=await fetch(SUPABASE_URL+'/rest/v1/rpc/nearby_competitors',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({user_lat:lat,user_lng:lng,radius_km:1.5})
+    });
+    result.dbCompetitors=(await dbCompR.json())||[];
+  }catch(e){result.dbCompetitors=[];}
+
   result.bars=searches[3];
   result.restaurants=searches[4];
   result.malls=searches[5];
@@ -895,6 +949,14 @@ function poiSummary(poi){
   else lines.push('Supermercados/tiendas formales (1km): 0 encontrados');
   if(poi.convenienceStores.length)lines.push('Tiendas conveniencia (800m): '+poi.convenienceStores.length+' — '+poi.convenienceStores.slice(0,4).map(function(p){return p.name}).join(', '));
   else lines.push('Tiendas conveniencia (800m): 0 encontradas');
+  if(poi.dbCompetitors&&poi.dbCompetitors.length){
+    var byChain={};
+    poi.dbCompetitors.forEach(function(c){byChain[c.cadena]=(byChain[c.cadena]||0)+1});
+    var chainStr=Object.entries(byChain).map(function(e){return e[0]+'('+e[1]+')'}).join(', ');
+    lines.push('🗃️ COMPETIDORES VERIFICADOS DB (1.5km): '+poi.dbCompetitors.length+' — '+chainStr+' — más cercano: '+poi.dbCompetitors[0].cadena+' a '+poi.dbCompetitors[0].distance_km+'km');
+  }else{
+    lines.push('🗃️ COMPETIDORES VERIFICADOS DB (1.5km): 0 encontrados en base de datos');
+  }
   lines.push('Gasolineras (600m): '+poi.gasStations.length+(poi.gasStations.length?(' — '+poi.gasStations.map(function(p){return p.name}).join(', ')):''));
   var mallAlert=poi.malls&&poi.malls.length?'⚠️ MALL DETECTADO ('+poi.malls.map(function(p){return p.name}).join(', ')+') — restaurantes NO son generadores nocturnos':'';
   if(poi.bars&&poi.bars.length)lines.push('Bares/night clubs REALES (500m): '+poi.bars.length+' — '+poi.bars.slice(0,4).map(function(p){return p.name}).join(', '));
@@ -936,7 +998,7 @@ async function aiScoreLocation(name,lat,lng,poi){
     '═══ REGLAS DE SCORING OBLIGATORIAS (SAL13 V2.0) ═══\n'+
     '1. USA LOS DATOS DE GOOGLE PLACES como evidencia principal. Son datos reales, no estimaciones.\n'+
     '2. NUNCA uses 5 como valor default. Cada variable debe justificarse con datos reales o geografía.\n'+
-    '3. Comp: 0 formales → Comp 7-8 (poca competencia). 3+ formales → Comp 2-4. Incluye Super Selectos, Walmart, tiendas gas.\n'+
+    '3. Comp: USA PRIMERO los datos de "🗃️ COMPETIDORES VERIFICADOS DB" — son datos reales de campo. 0 en DB + 0 Google → Comp 7-8. DB muestra 3+ competidores cadena → Comp 2-4. Si hay discrepancia entre DB y Google Places, priorizá DB.\n'+
     '4. CapD: basate en bancos+escuelas+farmacias. 0 de todos → CapD 2-3. Banco presente → CapD mínimo 5.\n'+
     '5. Noct/CapN: USA SOLO los datos de Bares/night clubs REALES para Noct. Bares reales ≥1 → Noct 5+. Bares reales =0 → Noct máximo 3 (restaurantes de mall no cuentan). Si ves "⚠️ MALL DETECTADO" → los restaurantes/cafes NO son generadores nocturnos; Noct máximo 2 salvo bares reales presentes. Gasolinera presente → CapN sube 1. Hospital → CapN mínimo 6.\n'+
     '6. Pob: 0 bancos en 1km = zona escasa (Pob 2-4). 3+ bancos = zona densa (Pob 7+).\n'+
@@ -1333,8 +1395,11 @@ async function showHistory(){
   cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+'</div><div style="font-size:10px;color:var(--tx3);text-align:center;padding:8px">Cargando...</div>';
   try{
     if(!u.email)throw new Error('no email');
-    var hdr={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
-    var resp=await fetch(SUPABASE_URL+'/rest/v1/scouting?scout_email=eq.'+encodeURIComponent(u.email)+'&order=scanned_at.desc&limit=50',{headers:hdr});
+    var resp=await fetch(SUPABASE_URL+'/functions/v1/get-history',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:u.email,token:'63523df1631db33b718090286fef4219b66ac9844225967b1835867304fb7b2c'})
+    });
     var dbHist=await resp.json();
     if(Array.isArray(dbHist)&&dbHist.length>0){
       cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+' · '+dbHist.length+' evaluaciones</div>'+renderItems(dbHist);
@@ -1345,6 +1410,40 @@ async function showHistory(){
     cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+' (local)</div>'+renderItems(getHistory());
   }
 }
+async function exportHistoryCSV(){
+  var u=JSON.parse(sessionStorage.getItem('sitelo_sal_user')||'{}');
+  if(!u.email){alert('Debés iniciar sesión para exportar.');return;}
+  var items=[];
+  try{
+    var resp=await fetch(SUPABASE_URL+'/functions/v1/get-history',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:u.email,token:'63523df1631db33b718090286fef4219b66ac9844225967b1835867304fb7b2c'})
+    });
+    items=await resp.json();
+  }catch(e){items=getHistory();}
+  if(!items||items.length===0){alert('No hay evaluaciones para exportar.');return;}
+  var vars=['TrafV','CapN','UbQ','Noct','Acc','Pob','Vis','CapD','Comp','Crec','Tur','DblV','Tick'];
+  var header=['Nombre','Fecha','Score','Grade','Lat','Lng','Notas'].concat(vars);
+  var rows=items.map(function(h){
+    var snap=h.vars_snapshot||{};
+    var base=[
+      '"'+(h.poi_name||h.name||'').replace(/"/g,"'") +'"',
+      h.scanned_at?new Date(h.scanned_at).toLocaleDateString('es-SV'):h.date||'',
+      h.score||'',h.grade||'',h.lat||'',h.lng||'',
+      '"'+(h.notes||h.justificacion||'').replace(/"/g,"'").slice(0,100)+'"'
+    ];
+    vars.forEach(function(k){base.push(snap[k]!==undefined?snap[k]:(h[k]||''))});
+    return base.join(',');
+  });
+  var csv=header.join(',')+String.fromCharCode(10)+rows.join(String.fromCharCode(10));
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='sitelo_sal_historial_'+(u.name||'scout').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(url);
+}
+
 function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
 function clearHistory(){
   if(confirm('¿Borrar todo el historial?')){
