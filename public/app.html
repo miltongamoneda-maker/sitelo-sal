@@ -1253,6 +1253,33 @@ function saveToHistory(s){
     localStorage.setItem(HIST_KEY,JSON.stringify(hist));
     renderHistSidebar();
   }catch(e){}
+  // Sync to Supabase scouting table
+  syncScanToSupabase(s);
+}
+
+async function syncScanToSupabase(s){
+  try{
+    var u=JSON.parse(sessionStorage.getItem('sitelo_sal_user')||'{}');
+    if(!u.email)return;
+    var vars={};
+    ['TrafV','CapN','UbQ','Noct','Acc','Pob','Vis','CapD','Comp','Crec','Tur','DblV','Tick'].forEach(function(k){vars[k]=s[k]||0});
+    if(s.delivScore)vars.delivScore=s.delivScore;
+    var h={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+    await fetch(SUPABASE_URL+'/rest/v1/scouting',{
+      method:'POST',
+      headers:h,
+      body:JSON.stringify({
+        poi_name:s.name,
+        lat:s.lat,lng:s.lng,
+        score:s.score,grade:s.grade,
+        vars_snapshot:vars,
+        notes:s.corrections||'',
+        scout_email:u.email,
+        status:'scouting',
+        scanned_at:new Date().toISOString()
+      })
+    });
+  }catch(e){}
 }
 function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]')}catch(e){return[]}}
 function renderHistSidebar(){
@@ -1274,20 +1301,42 @@ function selectFromHistory(id){
   var s=DB.find(function(x){return x.id===id});
   if(s){select(id)}
 }
-function showHistory(){
-  var hist=getHistory();
+async function showHistory(){
+  document.getElementById('historyModal').classList.add('show');
+  var cnt=document.getElementById('historyContent');
+  var u=JSON.parse(sessionStorage.getItem('sitelo_sal_user')||'{}');
   var cols={'A+':'var(--gn-a)','A':'var(--gn-a)','B':'var(--gn-b)','C':'var(--yl)','D':'var(--rd)','F':'var(--rd)'};
-  var html=hist.length===0?'<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún.</div>':
-    hist.map(function(h){
-      return'<div class="history-item" onclick="selectFromHistory(\''+h.id+'\');closeHistory()">'+
-        '<div class="hi-date">'+h.date+'</div>'+
-        '<div class="hi-name" style="color:'+(cols[h.grade]||'var(--tx)')+'">'+h.grade+' · '+h.name+'</div>'+
-        '<div class="hi-meta">Score: '+h.score+' · '+h.municipio+', '+h.departamento+'</div>'+
-        (h.justificacion?'<div style="font-size:9px;color:var(--tx3);margin-top:4px;line-height:1.4">'+h.justificacion.slice(0,120)+'…</div>':'')+
+  var userLabel=u.name||u.email||'';
+  function renderItems(items){
+    if(!items||items.length===0)return'<div style="color:var(--tx3);font-size:12px;text-align:center;padding:20px">Sin evaluaciones aún.</div>';
+    return items.map(function(h){
+      var grade=h.grade||'?';
+      var name=h.poi_name||h.name||'—';
+      var score=typeof h.score==='number'?h.score.toFixed(3):h.score||'—';
+      var date=h.scanned_at?new Date(h.scanned_at).toLocaleDateString('es-SV'):h.date||'—';
+      var notes=h.notes||h.justificacion||'';
+      return'<div class="history-item">'+
+        '<div class="hi-date">'+date+'</div>'+
+        '<div class="hi-name" style="color:'+(cols[grade]||'var(--tx)')+'">'+grade+' · '+name+'</div>'+
+        '<div class="hi-meta">Score: '+score+'</div>'+
+        (notes?'<div style="font-size:9px;color:var(--tx3);margin-top:4px;line-height:1.4">'+String(notes).slice(0,150)+'</div>':'')+
       '</div>';
     }).join('');
-  document.getElementById('historyContent').innerHTML=html;
-  document.getElementById('historyModal').classList.add('show');
+  }
+  cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+'</div><div style="font-size:10px;color:var(--tx3);text-align:center;padding:8px">Cargando...</div>';
+  try{
+    if(!u.email)throw new Error('no email');
+    var hdr={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+    var resp=await fetch(SUPABASE_URL+'/rest/v1/scouting?scout_email=eq.'+encodeURIComponent(u.email)+'&order=scanned_at.desc&limit=50',{headers:hdr});
+    var dbHist=await resp.json();
+    if(Array.isArray(dbHist)&&dbHist.length>0){
+      cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+' · '+dbHist.length+' evaluaciones</div>'+renderItems(dbHist);
+    }else{
+      cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+' (local)</div>'+renderItems(getHistory());
+    }
+  }catch(e){
+    cnt.innerHTML='<div style="font-size:10px;color:var(--tx3);margin-bottom:8px;font-weight:600">👤 '+userLabel+' (local)</div>'+renderItems(getHistory());
+  }
 }
 function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
 function clearHistory(){
